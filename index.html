@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solitec – clientes, pedidos e avisos</title>
+<meta name="theme-color" content="#0B0F14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Solitec">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Michroma&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F4F7; --surface:#FFFFFF; --sunk:#F5F8FA; --ink:#0F1A24; --muted:#5E6D7A; --line:#DFE5EB;
+  --accent:#1E88E5; --accent-ink:#FFFFFF; --accent-soft:rgba(30,136,229,.10);
+  --teal:#1F6F8B; --sand:#C9A064; --ok:#1E8A5A; --warn:#C2611F; --danger:#C0392B;
+  --side:#0B0F14; --side-line:#1A222B; --side-ink:#A9B6C2; --side-hi:#38A9F2;
+  --yellow:var(--accent); --yellow-ink:var(--accent-ink); --brita:var(--teal);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1216; --surface:#151B21; --sunk:#10151A; --ink:#E6EDF3; --muted:#8796A4; --line:#232C35;
+    --accent:#38A9F2; --accent-ink:#04121D; --accent-soft:rgba(56,169,242,.14);
+    --teal:#2C88A8; --sand:#B88F55; --ok:#4FB985; --warn:#E3904F; --danger:#E86A5A;
+    --side:#080B0F; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1216; --surface:#151B21; --sunk:#10151A; --ink:#E6EDF3; --muted:#8796A4; --line:#232C35;
+  --accent:#38A9F2; --accent-ink:#04121D; --accent-soft:rgba(56,169,242,.14);
+  --teal:#2C88A8; --sand:#B88F55; --ok:#4FB985; --warn:#E3904F; --danger:#E86A5A;
+  --side:#080B0F; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--side)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- marca e navegação ---- */
+header.top{background:var(--side);color:#F2F5F8}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:46px;height:auto;flex:none}
+.wordmark{display:flex;flex-direction:column;line-height:1}
+.wordmark .w1{font-family:"Michroma","Archivo",sans-serif;font-size:1.12rem;letter-spacing:.05em;color:#F4F7FA}
+.wordmark .w2{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.56rem;letter-spacing:.38em;text-transform:uppercase;color:#93A3B1}
+.wordmark .w2 i{display:block;width:12px;height:1px;background:var(--side-hi)}
+nav.tabs{display:flex}
+nav.tabs a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--side-ink);text-decoration:none;font-weight:550;font-size:.95rem;position:relative;transition:background .15s,color .15s}
+nav.tabs a:hover{color:#fff;background:rgba(255,255,255,.04)}
+nav.tabs a[aria-current="page"]{color:#fff;background:rgba(56,169,242,.13)}
+nav.tabs a[aria-current="page"] svg{color:var(--side-hi)}
+nav.tabs svg{width:19px;height:19px;flex:none}
+nav.tabs .badge{margin-left:auto;background:var(--side-hi);color:#04121D;border-radius:99px;font-size:.72rem;padding:1px 7px;font-weight:700}
+.side-foot{font-size:.8rem;color:#6E7D8A}
+.side-foot b{display:block;color:#C9D3DC;font-weight:600;margin-bottom:2px}
+
+@media (min-width:761px){
+  header.top{position:fixed;top:0;left:0;bottom:0;width:252px;display:flex;flex-direction:column;padding:calc(26px + env(safe-area-inset-top,0px)) 16px calc(20px + env(safe-area-inset-bottom,0px));border-right:1px solid var(--side-line);z-index:6}
+  .brand{padding:0 6px 26px;border-bottom:1px solid var(--side-line)}
+  nav.tabs{flex-direction:column;gap:3px;margin-top:22px}
+  nav.tabs a[aria-current="page"]::before{content:"";position:absolute;left:-16px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--side-hi)}
+  .side-foot{margin-top:auto;padding:16px 6px 0;border-top:1px solid var(--side-line)}
+  main{margin-left:252px;padding:34px 40px 60px;max-width:1240px}
+}
+
+main{padding:20px 16px 60px}
+h1{font-size:1.7rem;font-weight:700;font-stretch:112%;letter-spacing:-.015em;margin:0 0 4px;line-height:1.15}
+h2{font-size:1.02rem;font-weight:680;font-stretch:105%;margin:0 0 14px}
+.sub{color:var(--muted);margin:0 0 22px}
+.head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.head-row .sub{margin:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:1000px){.grid2{grid-template-columns:1fr}}
+
+/* indicadores */
+.ledger{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0}
+.ledger>div{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px 18px;overflow:hidden}
+.ledger>div:first-child{background:linear-gradient(135deg,#1E88E5,#155E8F);border-color:transparent;color:#fff}
+.ledger>div:first-child dt{color:rgba(255,255,255,.78)}
+.ledger>div:first-child::after{content:"";position:absolute;right:-26px;bottom:-30px;width:110px;height:110px;background:rgba(255,255,255,.08);clip-path:polygon(50% 0,100% 100%,0 100%);border-radius:12px}
+.ledger dt{color:var(--muted);font-size:.84rem;margin-bottom:8px;font-weight:550}
+.ledger dd{margin:0;font-size:1.6rem;font-weight:700;letter-spacing:-.01em;line-height:1.15}
+.ledger dd small{display:block;font-size:.8rem;font-weight:500;color:var(--muted);margin-top:4px}
+.ledger>div:first-child dd small{color:rgba(255,255,255,.75)}
+@media (max-width:1000px){.ledger{grid-template-columns:1fr 1fr}}
+
+.month-nav{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px}
+.month-nav strong{min-width:150px;text-align:center;font-weight:620}
+.month-nav .btn{border:0}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:10px;padding:9px 15px;font-weight:620;cursor:pointer;text-decoration:none;font-size:.93rem;background:var(--sunk);color:var(--ink);line-height:1.2;transition:background .15s,filter .15s}
+.btn:hover{filter:brightness(.96)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.wa{background:#1E8E57;color:#fff}
+.btn.small{padding:6px 11px;font-size:.85rem;border-radius:8px}
+.btn.icon{padding:7px 10px}
+.btn.danger{color:var(--danger);background:transparent;border-color:var(--line)}
+.btn svg{width:17px;height:17px}
+
+.alert{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:14px;padding:12px 16px;margin-bottom:16px}
+
+/* avisos */
+.pile-list{display:grid;gap:10px}
+.pile{display:grid;grid-template-columns:80px 1fr auto;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+.pile .meter{text-align:center;background:var(--sunk);border-radius:12px;padding:8px 4px 6px}
+.pile .meter svg{display:block;width:72px;height:40px;margin:0 auto}
+.pile .meter span{font-size:.74rem;color:var(--muted)}
+.pile .who{min-width:0}
+.pile .who b{font-size:1.04rem;font-weight:680}
+.pile .who p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.pile .when{font-weight:620}
+.when.late{color:var(--danger)} .when.soon{color:var(--warn)} .when.fine{color:var(--ok)}
+.pile .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:640px){.pile{grid-template-columns:72px 1fr}.pile .acts{grid-column:1/-1;justify-content:flex-start}.pile .meter svg{width:60px}}
+.group-title{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px}
+.group-title h2{margin:0}
+.group-title span{color:var(--muted);font-size:.88rem}
+
+/* tabelas */
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:.8rem;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--sunk)}
+td{padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--accent-soft)}
+td.r,th.r{text-align:right}
+.tag{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.78rem;font-weight:650}
+.tag.paid{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.tag.due{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.muted{color:var(--muted)}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input[type=search]{flex:1;min-width:180px}
+input,select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{min-height:120px;resize:vertical}
+label.f{display:block;font-size:.84rem;font-weight:600;color:var(--muted);margin-bottom:12px}
+label.f>input,label.f>select,label.f>textarea{margin-top:6px;color:var(--ink);font-weight:400}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 14px;cursor:pointer;font-weight:600;color:var(--muted);border-radius:8px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* gráficos */
+.chart svg{width:100%;height:auto;display:block}
+.bars{display:grid;gap:12px}
+.bars .b{display:grid;grid-template-columns:120px 1fr auto;gap:12px;align-items:center;font-size:.92rem}
+.bars .track{height:10px;background:var(--sunk);border-radius:99px;overflow:hidden}
+.bars .fill{height:100%;background:var(--teal);border-radius:99px}
+.bars .b:first-child .fill{background:var(--accent)}
+
+/* diálogos */
+dialog{border:1px solid var(--line);border-radius:18px;padding:0;width:min(620px,calc(100% - 20px));max-height:calc(100% - 30px);background:var(--surface);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(6,10,14,.6);backdrop-filter:blur(3px)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;padding:18px 22px 8px;position:sticky;top:0;background:var(--surface);z-index:1}
+.dlg-h h2{margin:0;font-size:1.15rem}
+.dlg-b{padding:8px 22px 4px}
+.dlg-f{display:flex;gap:8px;justify-content:flex-end;padding:14px 22px 20px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line)}
+.dlg-f .spacer{flex:1}
+.items{display:grid;gap:8px;margin:6px 0 10px}
+.item{display:grid;grid-template-columns:1.6fr .8fr 1fr auto;gap:8px;align-items:end;background:var(--sunk);border-radius:12px;padding:10px}
+.item label{font-size:.76rem;color:var(--muted);font-weight:600}
+.item input,.item select{margin-top:4px}
+.total-line{display:flex;justify-content:space-between;align-items:baseline;background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin:8px 0 16px}
+.total-line b{font-size:1.45rem;color:var(--accent)}
+.hint{font-size:.83rem;color:var(--muted);margin:-4px 0 12px}
+.hist{list-style:none;padding:0;margin:0}
+.hist li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.hist li:last-child{border-bottom:0}
+.prod-row{display:grid;grid-template-columns:1.6fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.prod-head{display:grid;grid-template-columns:1.6fr 1fr 1fr auto;gap:8px;font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:6px;padding-right:46px}
+.empty{text-align:center;padding:44px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:16px}
+.empty b{display:block;color:var(--ink);font-size:1.05rem;margin-bottom:6px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--side);color:#fff;border:1px solid var(--side-line);padding:10px 18px;border-radius:12px;font-weight:600;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+.store-note{font-size:.8rem;color:var(--muted);margin-top:30px;text-align:center}
+
+@media (max-width:760px){
+  header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;padding:12px 16px;border-bottom:1px solid var(--side-line)}
+  .brand .logo{width:36px}
+  .wordmark .w1{font-size:.98rem}
+  .side-foot{display:none}
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--side);border-top:1px solid var(--side-line);display:grid;grid-template-columns:repeat(6,1fr);padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
+  nav.tabs a{flex-direction:column;gap:3px;font-size:.7rem;padding:6px 2px;border-radius:10px}
+  nav.tabs a[aria-current="page"]{background:transparent;color:var(--side-hi)}
+  nav.tabs .badge{position:absolute;top:1px;right:calc(50% - 24px);margin:0}
+  main{padding-bottom:110px}
+  h1{font-size:1.45rem}
+  .ledger dd{font-size:1.3rem}
+  .item{grid-template-columns:1fr 1fr}
+  .item .it-prod{grid-column:1/-1}
+  .prod-row,.prod-head{grid-template-columns:1fr 1fr 1fr auto}
+  .prod-row .pn{grid-column:1/-1}
+  .prod-head{display:none}
+  .row2{grid-template-columns:1fr}
+}
+.chat{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;height:calc(100vh - 230px);min-height:420px;overflow:hidden}
+.chat-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:min(560px,86%);padding:10px 14px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
+.msg.eu{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.msg.ia{align-self:flex-start;background:var(--sunk);border-bottom-left-radius:4px}
+.msg.sis{align-self:center;background:transparent;color:var(--muted);font-size:.85rem;padding:2px 8px}
+.acao{align-self:flex-start;width:min(440px,92%);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:14px 16px;background:var(--surface)}
+.acao h3{margin:0 0 8px;font-size:.95rem}
+.acao ul{margin:0 0 10px;padding-left:18px}
+.acao .tot{display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
+.acao .bts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.acao.feito{border-left-color:var(--ok);opacity:.85}
+.acao.cancelado{border-left-color:var(--line);opacity:.6}
+.chat-in{display:flex;gap:8px;align-items:flex-end;padding:12px;border-top:1px solid var(--line);background:var(--surface)}
+.chat-in textarea{min-height:46px;max-height:140px;resize:none}
+.mic{width:46px;height:46px;border-radius:50%;flex:none;padding:0}
+.mic.on{background:var(--danger);color:#fff;animation:pulsa 1.2s infinite}
+@keyframes pulsa{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--danger) 25%,transparent)}}
+.digitando{align-self:flex-start;color:var(--muted);font-size:.9rem}
+.sugest{display:flex;gap:6px;flex-wrap:wrap}
+.sugest button{font-size:.84rem}
+@media (max-width:760px){.chat{height:calc(100vh - 260px)} nav.tabs a{font-size:.64rem}}
+.voz-hero{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#0B0F14 0%,#123A50 100%);color:#fff;border-radius:18px;padding:20px 22px;margin-bottom:16px;position:relative;overflow:hidden}
+.voz-hero::after{content:"";position:absolute;right:-30px;bottom:-40px;width:170px;height:150px;background:rgba(56,169,242,.12);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.voz-hero h2{margin:0 0 4px;font-size:1.2rem;color:#fff}
+.voz-hero p{margin:0;color:#B9C6D1;font-size:.92rem;max-width:560px}
+.voz-btn{flex:none;width:76px;height:76px;border-radius:50%;border:0;background:var(--side-hi);color:#04121D;cursor:pointer;display:grid;place-items:center;box-shadow:0 0 0 8px rgba(56,169,242,.18),0 0 0 16px rgba(56,169,242,.08);position:relative;z-index:1;transition:transform .15s}
+.voz-btn:hover{transform:scale(1.05)}
+.voz-btn svg{width:34px;height:34px}
+.fab{position:fixed;right:22px;bottom:calc(24px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;cursor:pointer;z-index:7;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.fab[hidden]{display:none}
+.fab svg{width:26px;height:26px}
+.voz-status{display:flex;align-items:center;gap:10px;justify-content:center;min-height:44px;color:var(--muted);font-weight:600;text-align:center}
+.voz-status.ouvindo{color:var(--danger)}
+.onda{display:inline-flex;gap:3px;align-items:center;height:20px}
+.onda i{width:4px;border-radius:2px;background:currentColor;animation:onda 1s infinite ease-in-out}
+.onda i:nth-child(2){animation-delay:.15s}.onda i:nth-child(3){animation-delay:.3s}.onda i:nth-child(4){animation-delay:.45s}
+@keyframes onda{0%,100%{height:6px}50%{height:20px}}
+.voz-log{padding:4px 0 8px;max-height:50vh}
+#vozRodape textarea{min-height:46px;height:46px;flex:1;resize:none}
+.voz-grande{width:84px;height:84px;margin:6px auto 0;display:grid;place-items:center;border-radius:50%;border:0;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.voz-grande.on{background:var(--danger);color:#fff;animation:pulsa 1.2s infinite}
+.voz-grande svg{width:36px;height:36px}
+@media (max-width:760px){.fab{bottom:calc(82px + env(safe-area-inset-bottom,0px));right:16px}.voz-hero{padding:18px}.voz-btn{width:64px;height:64px}}
+.voz-fala{background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:1.08rem;min-height:58px}
+.voz-fala small{display:block;color:var(--muted);font-size:.78rem;margin-bottom:4px}
+.voz-fala #vozFala:empty::before{content:"…";color:var(--muted)}
+.voz-erro{background:color-mix(in srgb,var(--danger) 11%,transparent);color:var(--danger);border-radius:12px;padding:12px 14px;font-size:.92rem;margin:8px 0;line-height:1.45}
+.login{max-width:420px;margin:40px auto}
+.login .panel{padding:26px}
+.login p{color:var(--muted);margin:0 0 18px}
+.login .acts{display:flex;gap:8px;flex-wrap:wrap}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+.status-dot.off{background:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  
+    <div class="brand">
+      <svg class="logo" viewBox="160 22 366 272" aria-label="Solitec">
+        <defs><linearGradient id="lgA" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1E7FD8"/><stop offset="1" stop-color="#45B8F7"/></linearGradient>
+        <linearGradient id="lgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F7E9C"/><stop offset="1" stop-color="#123E52"/></linearGradient></defs>
+        <path d="M168 290 L354 28 L398 84 L300 214 Q276 248 282 290 Z" fill="url(#lgA)"/>
+        <path d="M410 112 Q414 108 418 113 L508 236 Q528 268 498 290 L344 290 Q312 270 330 238 Z" fill="url(#lgB)"/>
+      </svg>
+      <div class="wordmark"><span class="w1">SOLITEC</span><span class="w2"><i></i>Construtora<i></i></span></div>
+    </div>
+    <nav class="tabs" aria-label="Seções">
+      <a href="#painel" data-view="painel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Painel</a>
+      <a href="#avisos" data-view="avisos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>Avisos <span class="badge" id="badge" hidden></span></a>
+      <a href="#pedidos" data-view="pedidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>Pedidos</a>
+      <a href="#clientes" data-view="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.6"/></svg>Clientes</a>
+      <a href="#central" data-view="central"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01" stroke-linecap="round" stroke-width="2.6"/></svg>Central</a>
+      <a href="#ajustes" data-view="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 21h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>Ajustes</a>
+    </nav>
+    <div class="side-foot"><b id="brandName">Solitec Construtora</b>Areia, brita e agregados</div>
+</header>
+
+<main id="app"><div class="loading">Carregando seus dados…</div></main>
+<dialog id="dlg"></dialog>
+<button class="fab" id="fab" data-act="voz" aria-label="Falar um pedido" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const brl = n => (Number(n)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const m3 = n => (Math.round((Number(n)||0)*10)/10).toLocaleString("pt-BR") + " m³";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset()*60000); return z.toISOString().slice(0,10); };
+const hoje = () => iso(new Date());
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const addDias = (s, n) => { const d = parse(s); d.setDate(d.getDate()+n); return iso(d); };
+const difDias = (a, b) => Math.round((parse(a) - parse(b)) / 86400000);
+const dataBR = s => s ? parse(s).toLocaleDateString("pt-BR") : "";
+const mesNome = (y, m) => { const t = new Date(y, m, 1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"}); return t.charAt(0).toUpperCase() + t.slice(1); };
+const soDigitos = s => String(s||"").replace(/\D/g,"");
+const foneWa = s => { let d = soDigitos(s); if (d.length === 10 || d.length === 11) d = "55" + d; return d; };
+const primeiroNome = n => String(n||"").trim().split(/\s+/)[0] || "";
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("on"),2200); }
+
+const PRODUTOS_PADRAO = [
+  {id:"areia-media", nome:"Areia média", preco:120, dias:20},
+  {id:"areia-fina",  nome:"Areia fina",  preco:130, dias:20},
+  {id:"brita-0",     nome:"Brita 0",     preco:160, dias:25},
+  {id:"brita-1",     nome:"Brita 1",     preco:150, dias:25},
+  {id:"po-brita",    nome:"Pó de brita", preco:90,  dias:30},
+  {id:"aterro",      nome:"Aterro",      preco:60,  dias:30},
+];
+const MSG_PADRAO = "Olá, {nome}! Aqui é da {empresa}. No dia {data} você levou {itens}. Pela nossa conta, o material já deve estar acabando. Quer repetir o pedido?\n\n1 – Sim, a mesma quantidade\n2 – Quero mudar a quantidade\n3 – Quero outro material também\n4 – Agora não, obrigado";
+const CONFIG_PADRAO = { empresa:"Solitec Construtora", cacamba:5, produtos:PRODUTOS_PADRAO, msg:MSG_PADRAO, salvo:false };
+const FORMAS = ["Pix","Dinheiro","Cartão","Boleto","Fiado"];
+
+/* ---------- estado ---------- */
+const S = { config:{...CONFIG_PADRAO}, clientes:{}, pedidos:{}, pronto:false, modo:"local" };
+const UI = { mes:null, filtroPed:"todos", busca:"" };
+{ const d = new Date(); UI.mes = [d.getFullYear(), d.getMonth()]; }
+
+/* ---------- armazenamento: neste aparelho ou na nuvem (Supabase) ---------- */
+const CHAVE_LOCAL = "solitec-dados-v1", CHAVE_CONEXAO = "solitec-conexao", CHAVE_BACKUP = "solitec-backup-local";
+const lerLS = k => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e){ return null; } };
+const gravarLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+function carregarScript(src, ms){
+  return new Promise((ok, erro) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = erro; document.head.appendChild(sc); setTimeout(() => erro(new Error("tempo esgotado")), ms || 15000); });
+}
+const Store = {
+  sb:null, user:null,
+  conexao(){ return lerLS(CHAVE_CONEXAO); },
+  async init(){
+    const local = lerLS(CHAVE_LOCAL);
+    if (local) { S.config = {...CONFIG_PADRAO, ...local.config}; S.clientes = local.clientes || {}; S.pedidos = local.pedidos || {}; }
+    const cx = this.conexao();
+    if (cx && cx.url && cx.key) {
+      try {
+        if (!window.supabase) await carregarScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js", 12000);
+        this.sb = window.supabase.createClient(cx.url, cx.key);
+        const { data } = await this.sb.auth.getSession();
+        if (!data.session) { S.precisaLogin = true; S.pronto = true; render(); return; }
+        this.user = data.session.user; S.modo = "nuvem";
+        await this.carregar(); this.ouvir();
+      } catch(e) { console.warn(e); toast("Sem conexão com a nuvem. Usando os dados deste aparelho."); }
+    } else { S.modo = "local"; }
+    S.pronto = true; render();
+  },
+  async carregar(){
+    const { data, error } = await this.sb.from("registros").select("colecao,id,dados");
+    if (error) { toast("Não foi possível baixar os dados da nuvem"); return; }
+    const c = {}, p = {}; let conf = null;
+    data.forEach(r => { if (r.colecao === "clientes") c[r.id] = r.dados; else if (r.colecao === "pedidos") p[r.id] = r.dados; else if (r.colecao === "config") conf = r.dados; });
+    S.clientes = c; S.pedidos = p; if (conf) S.config = {...CONFIG_PADRAO, ...conf};
+    this.salvarLocal();
+  },
+  ouvir(){
+    const atualizar = () => { clearTimeout(this.t); this.t = setTimeout(async () => { await this.carregar(); render(); }, 400); };
+    try { this.sb.channel("registros").on("postgres_changes", {event:"*", schema:"public", table:"registros"}, atualizar).subscribe(); } catch(e){}
+    window.addEventListener("focus", atualizar);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizar(); });
+  },
+  salvarLocal(){ gravarLS(CHAVE_LOCAL, {config:S.config, clientes:S.clientes, pedidos:S.pedidos}); },
+  async nuvem(col, id, data){
+    if (S.modo !== "nuvem") return;
+    const { error } = await this.sb.from("registros").upsert({ owner:this.user.id, colecao:col, id, dados:data, atualizado:new Date().toISOString() }, { onConflict:"owner,colecao,id" });
+    if (error) toast("Salvo no aparelho, mas não na nuvem. Verifique a internet.");
+  },
+  async set(col, id, data){ S[col][id] = data; this.salvarLocal(); render(); await this.nuvem(col, id, data); },
+  async del(col, id){
+    delete S[col][id]; this.salvarLocal(); render();
+    if (S.modo === "nuvem") { const { error } = await this.sb.from("registros").delete().eq("colecao", col).eq("id", id); if (error) toast("Não foi possível excluir na nuvem."); }
+  },
+  async config(c){ S.config = c; this.salvarLocal(); render(); await this.nuvem("config", "main", c); },
+  async enviarTudo(dados){
+    const linhas = [];
+    Object.entries(dados.clientes || {}).forEach(([id,d]) => linhas.push({owner:this.user.id, colecao:"clientes", id, dados:d}));
+    Object.entries(dados.pedidos || {}).forEach(([id,d]) => linhas.push({owner:this.user.id, colecao:"pedidos", id, dados:d}));
+    if (dados.config) linhas.push({owner:this.user.id, colecao:"config", id:"main", dados:dados.config});
+    for (let i = 0; i < linhas.length; i += 200) {
+      const { error } = await this.sb.from("registros").upsert(linhas.slice(i, i+200), { onConflict:"owner,colecao,id" });
+      if (error) { toast("Falha ao enviar: " + error.message); return false; }
+    }
+    await this.carregar(); render(); return true;
+  }
+};
+
+/* ---------- regras do negócio ---------- */
+const pedidosLista = () => Object.entries(S.pedidos).map(([id,p]) => ({id,...p})).sort((a,b) => (b.data||"").localeCompare(a.data||"") || (b.criado||0)-(a.criado||0));
+const pedidosDe = cid => pedidosLista().filter(p => p.cliente === cid);
+const clientesLista = () => Object.entries(S.clientes).map(([id,c]) => ({id,...c})).sort((a,b) => String(a.nome||"").localeCompare(String(b.nome||""),"pt-BR"));
+const produto = id => S.config.produtos.find(p => p.id === id);
+const itensTexto = itens => {
+  const partes = (itens||[]).map(i => `${m3(i.qtd)} de ${i.nome}`);
+  return partes.length > 1 ? partes.slice(0,-1).join(", ") + " e " + partes.at(-1) : (partes[0] || "");
+};
+function cicloSugerido(cid, itens){
+  const ps = pedidosDe(cid).map(p => p.data).sort();
+  if (ps.length >= 2) {
+    let soma = 0; for (let i=1;i<ps.length;i++) soma += difDias(ps[i], ps[i-1]);
+    const media = Math.round(soma / (ps.length-1));
+    if (media >= 3) return media;
+  }
+  const ds = (itens||[]).map(i => produto(i.prod)?.dias || 20);
+  return ds.length ? Math.max(...ds) : 20;
+}
+function situacao(cid){
+  const ps = pedidosDe(cid);
+  if (!ps.length) return null;
+  const ult = ps[0];
+  const ciclo = Number(ult.ciclo) || 20;
+  const passou = difDias(hoje(), ult.data);
+  const resta = Math.max(0, Math.min(1, 1 - passou/ciclo));
+  const prev = addDias(ult.data, ciclo);
+  const faltam = difDias(prev, hoje());
+  const total = ps.reduce((s,p) => s + (Number(p.total)||0), 0);
+  return { ult, ciclo, resta, prev, faltam, avisado: !!ult.avisadoEm, total, qtd: ps.length };
+}
+function quandoTexto(f){
+  if (f < -1) return {t:`Deve ter acabado há ${-f} dias`, c:"late"};
+  if (f === -1) return {t:"Deve ter acabado ontem", c:"late"};
+  if (f === 0) return {t:"Deve acabar hoje", c:"late"};
+  if (f === 1) return {t:"Deve acabar amanhã", c:"soon"};
+  if (f <= 3) return {t:`Deve acabar em ${f} dias`, c:"soon"};
+  return {t:`Dura mais ${f} dias`, c:"fine"};
+}
+function mensagem(cid){
+  const c = S.clientes[cid], st = situacao(cid);
+  return (S.config.msg || MSG_PADRAO)
+    .replaceAll("{nome}", primeiroNome(c.nome))
+    .replaceAll("{empresa}", S.config.empresa || "")
+    .replaceAll("{itens}", itensTexto(st?.ult.itens))
+    .replaceAll("{data}", st ? dataBR(st.ult.data) : "");
+}
+const linkWa = cid => `https://wa.me/${foneWa(S.clientes[cid].fone)}?text=${encodeURIComponent(mensagem(cid))}`;
+function paraAvisar(){
+  return clientesLista().map(c => ({c, st:situacao(c.id)})).filter(x => x.st && x.st.faltam <= 3 && !x.st.avisado && soDigitos(x.c.fone));
+}
+
+/* ---------- desenho do monte de material ---------- */
+function monte(resta){
+  const h = 4 + 30*resta, cor = resta > .35 ? "var(--sand)" : resta > 0 ? "var(--warn)" : "var(--line)";
+  return `<svg viewBox="0 0 76 42" aria-hidden="true"><path d="M4 38 Q38 ${38-2*h} 72 38 Z" fill="${cor}"/><path d="M2 38.5h72" stroke="var(--muted)" stroke-width="1.5"/></svg>`;
+}
+
+/* ---------- navegação ---------- */
+const VIEWS = ["painel","avisos","pedidos","clientes","central","ajustes"];
+const viewAtual = () => { const h = location.hash.slice(1); return VIEWS.includes(h) ? h : "painel"; };
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0,0); });
+
+function render(){
+  if (!S.pronto) return;
+  const v = viewAtual();
+  document.querySelectorAll("nav.tabs a").forEach(a => { if (a.dataset.view === v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  $("#brandName").textContent = S.config.empresa || "Solitec Construtora";
+  const n = paraAvisar().length, b = $("#badge");
+  b.hidden = !n; b.textContent = n;
+  if (S.precisaLogin) { $("#app").innerHTML = vLogin(); const f=$("#fab"); if (f) f.hidden = true; return; }
+  const fab = $("#fab"); if (fab) fab.hidden = v === "central" || v === "painel";
+  if (dlg.open && dlg.dataset.tipo === "voz") renderVoz();
+  const foco = document.activeElement?.id, pos = document.activeElement?.selectionStart;
+  let tela;
+  try { tela = ({painel:vPainel, avisos:vAvisos, pedidos:vPedidos, clientes:vClientes, central:vCentral, ajustes:vAjustes})[v](); }
+  catch(err) { console.error(err); tela = `<div class="empty"><b>Esta tela não abriu</b>Ocorreu um erro: ${esc(err.message)}. Tire um print desta mensagem e envie para o suporte.</div>`; }
+  $("#app").innerHTML = tela +
+    `<p class="store-note"><span class="status-dot ${S.modo==="nuvem"?"":"off"}"></span>${S.modo==="nuvem" ? "Sincronizado na nuvem: os mesmos dados no computador e no celular." : "Dados salvos só neste aparelho. Para sincronizar, conecte a nuvem em Ajustes."}<br>Versão 4 · com microfone</p>`;
+  const log = document.getElementById("chatLog"); if (log) log.scrollTop = log.scrollHeight;
+  if (foco) { const el = document.getElementById(foco); if (el) { el.focus(); try { el.setSelectionRange(pos,pos); } catch(e){} } }
+}
+
+/* ---------- Painel ---------- */
+function vPainel(){
+  const [y,m] = UI.mes;
+  const doMes = pedidosLista().filter(p => { const d = parse(p.data); return d.getFullYear()===y && d.getMonth()===m; });
+  const receita = doMes.reduce((s,p)=>s+(+p.total||0),0);
+  const vol = doMes.reduce((s,p)=>s+(p.itens||[]).reduce((a,i)=>a+(+i.qtd||0),0),0);
+  const aReceber = pedidosLista().filter(p=>!p.pago).reduce((s,p)=>s+(+p.total||0),0);
+  const ticket = doMes.length ? receita/doMes.length : 0;
+  const avisar = paraAvisar();
+
+  // receita 6 meses
+  const meses = [];
+  for (let i=5;i>=0;i--){ const d = new Date(y, m-i, 1); meses.push({y:d.getFullYear(), m:d.getMonth(), v:0}); }
+  pedidosLista().forEach(p => { const d = parse(p.data); const k = meses.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth()); if (k) k.v += +p.total||0; });
+  const max = Math.max(1, ...meses.map(x=>x.v));
+  const W=600, H=220, bw=62, gap=(W-40-bw*6)/5;
+  const barras = meses.map((x,i) => {
+    const h = Math.round((x.v/max)*150), xx = 20 + i*(bw+gap), yy = 175-h;
+    const atual = i===5;
+    return `<rect x="${xx}" y="${yy}" width="${bw}" height="${Math.max(h,2)}" rx="6" fill="${atual?"var(--yellow)":"var(--brita)"}" opacity="${atual?1:.75}"/>
+      <text x="${xx+bw/2}" y="${yy-7}" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="600">${x.v? (x.v>=1000? (x.v/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})+" mil" : Math.round(x.v)) : ""}</text>
+      <text x="${xx+bw/2}" y="198" text-anchor="middle" font-size="13" fill="var(--muted)">${new Date(x.y,x.m,1).toLocaleDateString("pt-BR",{month:"short"}).replace(".","")}</text>`;
+  }).join("");
+
+  // produtos do mês
+  const porProd = {};
+  doMes.forEach(p => (p.itens||[]).forEach(i => { porProd[i.nome] = (porProd[i.nome]||0) + (+i.qtd||0); }));
+  const prodArr = Object.entries(porProd).sort((a,b)=>b[1]-a[1]);
+  const pmax = Math.max(1, ...prodArr.map(x=>x[1]));
+
+  // melhores clientes
+  const top = clientesLista().map(c => ({c, st:situacao(c.id)})).filter(x=>x.st).sort((a,b)=>b.st.total-a.st.total).slice(0,5);
+
+  return `
+  <section class="voz-hero">
+    <button class="voz-btn" data-act="voz" aria-label="Falar um pedido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <div><h2>Fale o pedido</h2><p>Toque no microfone e diga o cliente, o material, a quantidade e o pagamento. Ex.: “duas caçambas de areia média para o João, pago no Pix”.</p></div>
+  </section>
+  ${!S.config.salvo ? `<div class="alert"><span>Os preços e o tempo de duração de cada material são exemplos. Ajuste com os seus valores antes de lançar pedidos.</span><a class="btn small primary" href="#ajustes">Ajustar preços</a></div>` : ""}
+  ${avisar.length ? `<div class="alert"><span><b>${avisar.length} ${avisar.length>1?"clientes estão":"cliente está"}</b> com o material acabando e ainda não ${avisar.length>1?"foram avisados":"foi avisado"}.</span><a class="btn small primary" href="#avisos">Ver avisos</a></div>` : ""}
+  <div class="head-row">
+    <div><h1>Painel</h1><p class="sub">Como foi o mês e o que está para vencer.</p></div>
+    <div class="month-nav">
+      <button class="btn icon ghost" data-act="mes" data-d="-1" aria-label="Mês anterior">‹</button>
+      <strong>${mesNome(y,m)}</strong>
+      <button class="btn icon ghost" data-act="mes" data-d="1" aria-label="Próximo mês">›</button>
+    </div>
+  </div>
+  <dl class="ledger num">
+    <div><dt>Receita</dt><dd>${brl(receita)}</dd></div>
+    <div><dt>Pedidos</dt><dd>${doMes.length} <small>ticket médio ${brl(ticket)}</small></dd></div>
+    <div><dt>Material entregue</dt><dd>${m3(vol)} <small>≈ ${Math.ceil(vol/(+S.config.cacamba||5))||0} viagens</small></dd></div>
+    <div><dt>A receber (total)</dt><dd style="color:${aReceber?"var(--warn)":"inherit"}">${brl(aReceber)}</dd></div>
+  </dl>
+  <div class="grid2">
+    <section class="panel chart"><h2>Receita dos últimos 6 meses</h2>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Receita por mês">${barras}</svg>
+    </section>
+    <section class="panel"><h2>Mais vendidos no mês</h2>
+      ${prodArr.length ? `<div class="bars num">${prodArr.map(([n,q])=>`<div class="b"><span>${esc(n)}</span><div class="track"><div class="fill" style="width:${q/pmax*100}%"></div></div><span>${m3(q)}</span></div>`).join("")}</div>` : `<p class="muted">Nenhuma venda neste mês.</p>`}
+    </section>
+  </div>
+  <section class="panel" style="margin-top:16px"><h2>Melhores clientes</h2>
+    ${top.length ? `<ul class="hist num">${top.map(x=>`<li><span><b>${esc(x.c.nome)}</b> <span class="muted">· ${x.st.qtd} ${x.st.qtd>1?"pedidos":"pedido"}</span></span><span>${brl(x.st.total)}</span></li>`).join("")}</ul>` : `<p class="muted">Lance os primeiros pedidos para ver quem mais compra.</p>`}
+  </section>`;
+}
+
+/* ---------- Avisos ---------- */
+function cartao(c, st){
+  const q = quandoTexto(st.faltam);
+  const temFone = !!soDigitos(c.fone);
+  return `<div class="pile">
+    <div class="meter">${monte(st.resta)}<span class="num">${Math.round(st.resta*100)}% restante</span></div>
+    <div class="who"><b>${esc(c.nome)}</b>
+      <p>${esc(itensTexto(st.ult.itens))} · entregue em ${dataBR(st.ult.data)}</p>
+      <p class="when ${q.c}">${q.t}${st.avisado ? ` · avisado em ${dataBR(st.ult.avisadoEm)}` : ""}</p></div>
+    <div class="acts">
+      ${temFone ? `<a class="btn small wa" href="${esc(linkWa(c.id))}" target="_blank" rel="noopener" data-act="avisar" data-id="${c.id}">WhatsApp</a>` : `<button class="btn small ghost" data-act="cliente" data-id="${c.id}">Sem telefone</button>`}
+      <button class="btn small" data-act="repetir" data-id="${c.id}">Repetir pedido</button>
+      ${st.avisado ? `<button class="btn small ghost" data-act="desavisar" data-id="${c.id}">Desfazer aviso</button>` : `<button class="btn small ghost" data-act="marcar" data-id="${c.id}">Marcar avisado</button>`}
+    </div></div>`;
+}
+function vAvisos(){
+  const todos = clientesLista().map(c=>({c,st:situacao(c.id)})).filter(x=>x.st).sort((a,b)=>a.st.faltam-b.st.faltam);
+  if (!todos.length) return `<h1>Avisos</h1><p class="sub">Quem está ficando sem material.</p><div class="empty"><b>Nenhum pedido lançado ainda</b>Quando você registrar uma entrega, o app calcula quando o material deve acabar e lembra você de chamar o cliente.<br><br><button class="btn primary" data-act="novoPedido">Lançar pedido</button></div>`;
+  const agora = todos.filter(x=>x.st.faltam<=3 && !x.st.avisado);
+  const avisados = todos.filter(x=>x.st.avisado);
+  const depois = todos.filter(x=>x.st.faltam>3 && !x.st.avisado);
+  const grupo = (t, d, arr) => arr.length ? `<div class="group-title"><h2>${t}</h2><span>${d}</span></div><div class="pile-list">${arr.map(x=>cartao(x.c,x.st)).join("")}</div>` : "";
+  return `<h1>Avisos</h1><p class="sub">O monte mostra quanto do último pedido ainda deve restar na obra. Ao tocar em WhatsApp, a mensagem já vai pronta e o cliente fica marcado como avisado.</p>
+    ${agora.length ? "" : `<div class="alert"><span>Ninguém para avisar agora. Tudo em dia.</span></div>`}
+    ${grupo("Avisar agora", "acaba em até 3 dias ou já acabou", agora)}
+    ${grupo("Já avisados", "aguardando resposta", avisados)}
+    ${grupo("Em dia", "ainda têm material", depois)}`;
+}
+
+/* ---------- Pedidos ---------- */
+function vPedidos(){
+  let ps = pedidosLista();
+  if (UI.filtroPed === "abertos") ps = ps.filter(p=>!p.pago);
+  const nomes = id => S.clientes[id]?.nome || "Cliente excluído";
+  return `<div class="head-row"><div><h1>Pedidos</h1><p class="sub">Entregas lançadas, do mais recente ao mais antigo.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-act="excel">Exportar para Excel</button><button class="btn primary" data-act="novoPedido">+ Novo pedido</button></div></div>
+  <div class="toolbar"><div class="seg" role="group" aria-label="Filtrar">
+    <button data-act="filtro" data-f="todos" aria-pressed="${UI.filtroPed==="todos"}">Todos</button>
+    <button data-act="filtro" data-f="abertos" aria-pressed="${UI.filtroPed==="abertos"}">A receber</button></div></div>
+  ${ps.length ? `<div class="tbl-wrap"><table class="num"><thead><tr><th>Data</th><th>Cliente</th><th>Material</th><th class="r">Total</th><th>Pagamento</th></tr></thead><tbody>
+    ${ps.map(p=>`<tr class="click" data-act="editPedido" data-id="${p.id}" tabindex="0"><td>${dataBR(p.data)}</td><td>${esc(nomes(p.cliente))}</td><td>${esc(itensTexto(p.itens))}</td><td class="r">${brl(p.total)}</td>
+      <td><span class="tag ${p.pago?"paid":"due"}">${p.pago?"Pago":"A receber"}</span> <span class="muted">${esc(p.forma||"")}</span></td></tr>`).join("")}
+  </tbody></table></div>` : `<div class="empty"><b>${UI.filtroPed==="abertos"?"Nada a receber":"Nenhum pedido ainda"}</b>${UI.filtroPed==="abertos"?"Todos os pedidos estão pagos.":"Lance a primeira entrega para começar o histórico."}</div>`}`;
+}
+
+/* ---------- Clientes ---------- */
+function vClientes(){
+  const q = UI.busca.trim().toLowerCase();
+  const cs = clientesLista().filter(c => !q || c.nome.toLowerCase().includes(q) || soDigitos(c.fone).includes(soDigitos(q)||"§") || (c.endereco||"").toLowerCase().includes(q));
+  return `<div class="head-row"><div><h1>Clientes</h1><p class="sub">${clientesLista().length} cadastrados.</p></div><button class="btn primary" data-act="novoCliente">+ Novo cliente</button></div>
+  <div class="toolbar"><input type="search" id="busca" placeholder="Buscar por nome, telefone ou endereço" value="${esc(UI.busca)}" aria-label="Buscar clientes"></div>
+  ${cs.length ? `<div class="tbl-wrap"><table class="num"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Último pedido</th><th>Material</th><th class="r">Total comprado</th></tr></thead><tbody>
+  ${cs.map(c=>{ const st = situacao(c.id); const qd = st ? quandoTexto(st.faltam) : null;
+    return `<tr class="click" data-act="cliente" data-id="${c.id}" tabindex="0"><td><b>${esc(c.nome)}</b>${c.endereco?`<br><span class="muted">${esc(c.endereco)}</span>`:""}</td><td>${esc(c.fone||"–")}</td>
+    <td>${st?dataBR(st.ult.data):"–"}</td><td>${qd?`<span class="when ${qd.c}">${qd.t}</span>`:"–"}</td><td class="r">${st?brl(st.total):"–"}</td></tr>`;}).join("")}
+  </tbody></table></div>` : `<div class="empty"><b>${q?"Nenhum cliente encontrado":"Nenhum cliente cadastrado"}</b>${q?"Tente outro nome ou telefone.":"Cadastre quem compra com você para receber os avisos de reposição."}</div>`}`;
+}
+
+/* ---------- Entrar ---------- */
+function vLogin(){
+  return `<div class="login"><div class="panel">
+    <h1>Entrar</h1><p>O app está conectado à nuvem, então é preciso entrar para abrir as telas. Use o mesmo e-mail e senha no computador e no celular. Se ainda não confirmou o e-mail, procure a mensagem do Supabase na caixa de entrada (ou no spam). Para usar sem login, toque em “Usar sem nuvem”.</p>
+    <label class="f">E-mail<input id="lgEmail" type="email" autocomplete="username"></label>
+    <label class="f">Senha<input id="lgSenha" type="password" autocomplete="current-password"></label>
+    <div class="acts"><button class="btn primary" data-act="entrar">Entrar</button><button class="btn ghost" data-act="criarConta">Criar conta</button>
+    <span class="spacer" style="flex:1"></span><button class="btn ghost" data-act="usarLocal">Usar sem nuvem</button></div>
+  </div></div>`;
+}
+
+/* ---------- Ajustes ---------- */
+function vAjustes(){
+  const c = S.config;
+  return `<h1>Ajustes</h1><p class="sub">Seus preços, a caçamba e a mensagem que vai para o cliente.</p>
+  <section class="panel"><h2>Empresa</h2>
+    <div class="row2"><label class="f">Nome que aparece na mensagem<input id="cfEmpresa" value="${esc(c.empresa)}"></label>
+    <label class="f">Capacidade da caçamba (m³)<input id="cfCacamba" type="number" min="1" step="0.5" value="${esc(c.cacamba)}"></label></div>
+  </section>
+  <section class="panel" style="margin-top:16px"><h2>Materiais</h2>
+    <p class="hint" style="margin-top:0">“Dura em dias” é o tempo médio que uma entrega costuma durar na obra. Depois de alguns pedidos, o app passa a usar o ritmo real de cada cliente.</p>
+    <div class="prod-head"><span>Material</span><span>Preço por m³</span><span>Dura em dias</span></div>
+    <div id="prodRows">${c.produtos.map(p=>prodRow(p)).join("")}</div>
+    <button class="btn small ghost" data-act="addProd">+ Adicionar material</button>
+  </section>
+  <section class="panel" style="margin-top:16px"><h2>Mensagem de reposição</h2>
+    <p class="hint" style="margin-top:0">Use {nome}, {empresa}, {itens} e {data}: o app troca pelos dados de cada cliente.</p>
+    <textarea id="cfMsg" rows="9">${esc(c.msg)}</textarea>
+  </section>
+  <div style="display:flex;gap:8px;margin-top:16px"><button class="btn primary" data-act="salvarCfg">Salvar ajustes</button></div>
+  <section class="panel" style="margin-top:28px"><h2>Sincronizar computador e celular</h2>
+    ${S.modo === "nuvem" ? `<p class="hint" style="margin-top:0"><span class="status-dot"></span>Conectado como <b>${esc(Store.user?.email)}</b>.</p>
+      ${lerLS(CHAVE_BACKUP) ? `<p class="hint">Existem dados que estavam só neste aparelho antes de conectar.</p><button class="btn small" data-act="enviarBackup">Enviar esses dados para a nuvem</button> ` : ""}
+      <button class="btn small ghost" data-act="sair">Sair da conta</button> <button class="btn small danger" data-act="desconectar">Desconectar a nuvem</button>`
+    : `<p class="hint" style="margin-top:0">Cole aqui o endereço e a chave pública do seu projeto no Supabase (o passo a passo está no arquivo LEIA-ME).</p>
+      <label class="f">Endereço do projeto<input id="cxUrl" placeholder="https://xxxx.supabase.co" value="${esc(Store.conexao()?.url||"")}"></label>
+      <label class="f">Chave pública (anon)<input id="cxKey" placeholder="eyJhbGciOi…" value="${esc(Store.conexao()?.key||"")}"></label>
+      <button class="btn primary small" data-act="conectar">Conectar</button>`}
+  </section>
+  <section class="panel" style="margin-top:16px"><h2>Assistente da Central</h2>
+    <p class="hint" style="margin-top:0">A Central usa a inteligência artificial do Claude. Crie uma chave em console.anthropic.com e cole aqui. Ela fica guardada só neste aparelho.</p>
+    <label class="f">Chave da API do Claude<input id="iaKey" type="password" placeholder="sk-ant-…" value="${esc(lerLS(CHAVE_IA)?.key||"")}" autocomplete="off"></label>
+    <label class="f">Modelo<select id="iaModelo"><option value="claude-sonnet-5-5" ${(lerLS(CHAVE_IA)?.modelo||"claude-sonnet-5-5")==="claude-sonnet-5-5"?"selected":""}>Sonnet (mais preciso)</option><option value="claude-haiku-5-5" ${lerLS(CHAVE_IA)?.modelo==="claude-haiku-5-5"?"selected":""}>Haiku (mais barato e rápido)</option></select></label>
+    <label class="f">Chave da OpenAI para transcrever áudio (opcional)<input id="iaWhisper" type="password" placeholder="sk-…" value="${esc(lerLS(CHAVE_IA)?.whisper||"")}" autocomplete="off"></label>
+    <p class="hint">Sem essa chave, o app usa o reconhecimento de voz do próprio navegador (grátis). Com ela, o áudio é gravado e transcrito pela OpenAI: mais preciso e funciona também no iPhone com o app instalado.</p>
+    <button class="btn small primary" data-act="salvarIA">Salvar chaves</button>
+  </section>
+  <section class="panel" style="margin-top:16px"><h2>Cópia de segurança</h2>
+    <p class="hint" style="margin-top:0">Baixe um arquivo com todos os clientes, pedidos e ajustes. Dá para restaurar em qualquer aparelho.</p>
+    <button class="btn small" data-act="excel">Planilha Excel</button>
+    <button class="btn small" data-act="baixarBackup">Baixar cópia</button>
+    <label class="btn small ghost" style="cursor:pointer">Restaurar cópia<input type="file" id="arqBackup" accept="application/json,.json" hidden></label>
+  </section>`;
+}
+const prodRow = p => `<div class="prod-row" data-id="${esc(p.id)}"><input class="pn" value="${esc(p.nome)}" aria-label="Material"><input class="pp" type="number" min="0" step="0.01" value="${esc(p.preco)}" aria-label="Preço por m³"><input class="pd" type="number" min="1" step="1" value="${esc(p.dias)}" aria-label="Dura em dias"><button class="btn icon danger" data-act="rmProd" aria-label="Remover material">✕</button></div>`;
+
+/* ---------- diálogos ---------- */
+const dlg = $("#dlg");
+function abrir(html){ dlg.dataset.tipo = ""; dlg.innerHTML = html; if (!dlg.open) dlg.showModal(); }
+dlg.addEventListener("close", () => { if (dlg.dataset.tipo === "voz") { dlg.dataset.tipo = ""; if (Voz.ativo) { Voz.cancelar = true; vozParar(); } } });
+const fechar = () => dlg.close();
+
+function dlgCliente(id){
+  const c = id ? S.clientes[id] : {nome:"",fone:"",endereco:"",obs:""};
+  const st = id ? situacao(id) : null;
+  const hist = id ? pedidosDe(id) : [];
+  abrir(`<div class="dlg-h"><h2>${id?"Cliente":"Novo cliente"}</h2><button class="btn icon ghost" data-act="fechar" aria-label="Fechar">✕</button></div>
+  <div class="dlg-b">
+    <label class="f">Nome<input id="cNome" value="${esc(c.nome)}" autocomplete="off"></label>
+    <div class="row2"><label class="f">WhatsApp (com DDD)<input id="cFone" inputmode="tel" placeholder="(87) 99999-0000" value="${esc(c.fone)}"></label>
+    <label class="f">Endereço da obra<input id="cEnd" value="${esc(c.endereco)}"></label></div>
+    <label class="f">Observações<input id="cObs" value="${esc(c.obs)}" placeholder="Ex.: portão azul, descarregar na calçada"></label>
+    ${hist.length ? `<h2 style="margin-top:8px">Histórico · ${brl(st.total)}</h2><ul class="hist num">${hist.map(p=>`<li><span>${dataBR(p.data)} · ${esc(itensTexto(p.itens))}</span><span>${brl(p.total)}</span></li>`).join("")}</ul>` : ""}
+  </div>
+  <div class="dlg-f">${id?`<button class="btn danger" data-act="delCliente" data-id="${id}">Excluir</button><span class="spacer"></span><button class="btn" data-act="repetir" data-id="${id}">Novo pedido</button>`:""}
+    <button class="btn primary" data-act="salvarCliente" data-id="${id||""}">Salvar cliente</button></div>`);
+  if (!id) setTimeout(()=>$("#cNome")?.focus(), 30);
+}
+
+function dlgPedido(id, preset){
+  const p = id ? {...S.pedidos[id]} : (preset || {cliente:"", data:hoje(), itens:[{prod:S.config.produtos[0]?.id, nome:S.config.produtos[0]?.nome, qtd:S.config.cacamba||5, preco:S.config.produtos[0]?.preco||0}], pago:false, forma:"Pix", obs:""});
+  const cs = clientesLista();
+  const ciclo = p.ciclo || (p.cliente ? cicloSugerido(p.cliente, p.itens) : null);
+  abrir(`<div class="dlg-h"><h2>${id?"Pedido":"Novo pedido"}</h2><button class="btn icon ghost" data-act="fechar" aria-label="Fechar">✕</button></div>
+  <div class="dlg-b">
+    <div class="row2">
+      <label class="f">Cliente<select id="pCli"><option value="">Escolha…</option><option value="__novo">+ Cadastrar novo cliente</option>${cs.map(c=>`<option value="${c.id}" ${c.id===p.cliente?"selected":""}>${esc(c.nome)}</option>`).join("")}</select></label>
+      <label class="f">Data da entrega<input id="pData" type="date" value="${esc(p.data)}"></label>
+    </div>
+    <div id="novoCliBox" hidden class="row2"><label class="f">Nome do novo cliente<input id="pNovoNome"></label><label class="f">WhatsApp<input id="pNovoFone" inputmode="tel" placeholder="(87) 99999-0000"></label></div>
+    <div class="items" id="pItens">${(p.itens||[]).map(itemRow).join("")}</div>
+    <button class="btn small ghost" data-act="addItem">+ Outro material</button>
+    <div class="total-line num"><span id="pViagens" class="muted"></span><b id="pTotal">${brl(p.total)}</b></div>
+    <div class="row2">
+      <label class="f">Forma de pagamento<select id="pForma">${FORMAS.map(f=>`<option ${f===p.forma?"selected":""}>${f}</option>`).join("")}</select></label>
+      <label class="f">Situação<select id="pPago"><option value="1" ${p.pago?"selected":""}>Pago</option><option value="0" ${!p.pago?"selected":""}>A receber</option></select></label>
+    </div>
+    <label class="f">Avisar o cliente daqui a quantos dias?<input id="pCiclo" type="number" min="1" value="${esc(ciclo||"")}" placeholder="Calculado ao escolher o cliente"></label>
+    <p class="hint" id="pCicloHint"></p>
+    <label class="f">Endereço de entrega<input id="pEntrega" value="${esc(p.entrega||"")}" placeholder="Se vazio, usa o endereço do cliente"></label>
+    <label class="f">Observações<input id="pObs" value="${esc(p.obs||"")}"></label>
+  </div>
+  <div class="dlg-f">${id?`<button class="btn danger" data-act="delPedido" data-id="${id}">Excluir</button><span class="spacer"></span>`:""}<button class="btn primary" data-act="salvarPedido" data-id="${id||""}">Salvar pedido</button></div>`);
+  dlg.dataset.cicloManual = id ? "1" : "";
+  if (preset && preset.novo) { $("#pCli").value = "__novo"; $("#novoCliBox").hidden = false; $("#pNovoNome").value = preset.novo.nome || ""; $("#pNovoFone").value = preset.novo.fone || ""; }
+  recalc();
+}
+const itemRow = i => `<div class="item">
+  <label class="it-prod">Material<select class="iProd">${S.config.produtos.map(p=>`<option value="${esc(p.id)}" ${p.id===i.prod?"selected":""}>${esc(p.nome)}</option>`).join("")}${i.prod && !produto(i.prod) ? `<option value="${esc(i.prod)}" selected>${esc(i.nome)}</option>`:""}</select></label>
+  <label>Quantidade (m³)<input class="iQtd" type="number" min="0" step="0.5" value="${esc(i.qtd)}"></label>
+  <label>Preço por m³<input class="iPreco" type="number" min="0" step="0.01" value="${esc(i.preco)}"></label>
+  <button class="btn icon danger" data-act="rmItem" aria-label="Remover material">✕</button></div>`;
+function lerItens(){
+  return [...dlg.querySelectorAll(".item")].map(r => {
+    const sel = r.querySelector(".iProd"); const pid = sel.value;
+    return { prod: pid, nome: produto(pid)?.nome || sel.selectedOptions[0]?.textContent || pid, qtd: +r.querySelector(".iQtd").value || 0, preco: +r.querySelector(".iPreco").value || 0 };
+  }).filter(i => i.qtd > 0);
+}
+function recalc(){
+  const itens = lerItens();
+  const total = itens.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const vol = itens.reduce((s,i)=>s+i.qtd,0);
+  const cap = +S.config.cacamba || 5;
+  $("#pTotal").textContent = brl(total);
+  $("#pViagens").textContent = vol ? `${m3(vol)} · ${Math.ceil(vol/cap)} ${Math.ceil(vol/cap)>1?"viagens":"viagem"} de caçamba` : "";
+  const cli = $("#pCli").value;
+  if (!dlg.dataset.cicloManual) {
+    const suger = cicloSugerido(cli && cli!=="__novo" ? cli : "", itens);
+    $("#pCiclo").value = suger;
+    const n = cli && cli!=="__novo" ? pedidosDe(cli).length : 0;
+    $("#pCicloHint").textContent = n >= 2 ? "Baseado no intervalo médio entre os pedidos deste cliente." : "Baseado no tempo de duração do material, em Ajustes.";
+  }
+}
+
+
+/* ---------- Central: assistente por texto e voz ---------- */
+const CHAVE_IA = "solitec-ia", CHAVE_CHAT = "solitec-chat";
+const Chat = { hist: lerLS(CHAVE_CHAT)?.hist || [], visto: lerLS(CHAVE_CHAT)?.visto || [], pendente: null, ocupado:false, rascunho:"" };
+const salvarChat = () => gravarLS(CHAVE_CHAT, { hist: Chat.hist.slice(-40), visto: Chat.visto.slice(-60) });
+// "visto" guarda o que aparece na tela: {t:'eu'|'ia'|'sis', txt} ou {t:'acao', id, nome, input, estado}
+
+const FERRAMENTAS = [
+  { name:"registrar_pedido",
+    description:"Prepara um pedido para o dono confirmar. Use quando ele disser o que um cliente comprou ou vai comprar.",
+    input_schema:{ type:"object", properties:{
+      cliente_id:{type:"string", description:"id de um cliente da lista, se ele já existir"},
+      novo_cliente:{type:"object", description:"preencha só se o cliente não estiver na lista", properties:{nome:{type:"string"}, fone:{type:"string"}, endereco:{type:"string"}}, required:["nome"]},
+      data:{type:"string", description:"data da entrega, AAAA-MM-DD"},
+      itens:{type:"array", items:{type:"object", properties:{
+        produto_id:{type:"string"}, quantidade_m3:{type:"number"},
+        preco_m3:{type:"number", description:"só se o dono disser um preço diferente da tabela"} }, required:["produto_id","quantidade_m3"]}},
+      pago:{type:"boolean"}, forma_pagamento:{type:"string", enum:FORMAS},
+      entrega:{type:"string", description:"endereço de entrega, se for diferente do cadastro"},
+      observacoes:{type:"string"} }, required:["data","itens"] } },
+  { name:"cadastrar_cliente",
+    description:"Prepara o cadastro de um cliente novo para o dono confirmar.",
+    input_schema:{ type:"object", properties:{ nome:{type:"string"}, fone:{type:"string"}, endereco:{type:"string"}, obs:{type:"string"} }, required:["nome"] } }
+];
+
+function contextoIA(){
+  const d = new Date(); const [y,m] = [d.getFullYear(), d.getMonth()];
+  const doMes = pedidosLista().filter(p => { const x = parse(p.data); return x.getFullYear()===y && x.getMonth()===m; });
+  const nome = id => S.clientes[id]?.nome || "?";
+  const avisar = paraAvisar().map(x => x.c.nome);
+  return `Você é o assistente da ${S.config.empresa}, que vende e entrega areia, brita e agregados com caçamba de ${S.config.cacamba} m³. Fale em português do Brasil, de forma curta e direta, como um bom funcionário de escritório. O dono fala com você por texto ou áudio transcrito (pode ter erros de transcrição: interprete com bom senso).
+Hoje é ${hoje()} (${d.toLocaleDateString("pt-BR",{weekday:"long"})}).
+
+REGRAS
+- Quando o dono descrever um pedido, chame registrar_pedido. Se faltar cliente, material ou quantidade, pergunte só o que falta, numa frase.
+- "Uma caçamba" = ${S.config.cacamba} m³. "Meia caçamba" = ${S.config.cacamba/2} m³.
+- Datas relativas ("ontem", "sexta") viram AAAA-MM-DD. Sem data, use hoje.
+- Use cliente_id quando o nome bater com alguém da lista (aceite apelidos e erros de grafia). Se não existir, use novo_cliente.
+- Nunca invente preço: só preencha preco_m3 se o dono disser um valor. O app calcula o total pela tabela.
+- Se não disserem nada sobre pagamento, não preencha pago.
+- Para perguntas sobre vendas, clientes ou avisos, responda com os dados abaixo. Não invente números.
+- O pedido só é gravado quando o dono tocar em Confirmar no cartão.
+
+MATERIAIS (id | nome | preço por m³)
+${S.config.produtos.map(p => `${p.id} | ${p.nome} | ${p.preco}`).join("\n")}
+
+CLIENTES (id | nome | WhatsApp | endereço)
+${clientesLista().slice(0,400).map(c => `${c.id} | ${c.nome} | ${c.fone||"-"} | ${c.endereco||"-"}`).join("\n") || "(nenhum cadastrado)"}
+
+RESUMO
+Mês atual: ${doMes.length} pedidos, receita ${brl(doMes.reduce((s,p)=>s+(+p.total||0),0))}.
+A receber (todos): ${brl(pedidosLista().filter(p=>!p.pago).reduce((s,p)=>s+(+p.total||0),0))}.
+Clientes para avisar hoje: ${avisar.join(", ") || "nenhum"}.
+
+ÚLTIMOS PEDIDOS (data | cliente | material | total | pago)
+${pedidosLista().slice(0,40).map(p => `${p.data} | ${nome(p.cliente)} | ${itensTexto(p.itens)} | ${p.total} | ${p.pago?"sim":"não"}`).join("\n") || "(nenhum)"}`;
+}
+
+function pushUser(blocos){
+  const ult = Chat.hist[Chat.hist.length-1];
+  if (ult && ult.role === "user") ult.content = ult.content.concat(blocos);
+  else Chat.hist.push({ role:"user", content:blocos });
+}
+function fecharPendente(texto){
+  if (!Chat.pendente) return;
+  pushUser([{ type:"tool_result", tool_use_id:Chat.pendente, content:texto }]);
+  const v = Chat.visto.find(x => x.t==="acao" && x.id===Chat.pendente);
+  if (v && v.estado === "aberto") v.estado = "cancelado";
+  Chat.pendente = null;
+}
+
+async function enviarIA(texto){
+  const cfg = lerLS(CHAVE_IA);
+  texto = String(texto||"").trim(); if (!texto || Chat.ocupado) return;
+  if (!cfg?.key) { enviarLocal(texto); return; }
+  const antes = { hist: JSON.stringify(Chat.hist), pendente: Chat.pendente };
+  fecharPendente("O dono não confirmou e mandou outra mensagem.");
+  pushUser([{ type:"text", text:texto }]);
+  Chat.visto.push({ t:"eu", txt:texto }); Chat.rascunho = ""; Chat.ocupado = true; salvarChat(); render();
+  // a conversa precisa começar com mensagem do usuário
+  while (Chat.hist.length && Chat.hist[0].role !== "user") Chat.hist.shift();
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{ "content-type":"application/json", "x-api-key":cfg.key, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true" },
+      body: JSON.stringify({ model: cfg.modelo || "claude-sonnet-5-5", max_tokens:1024, system:contextoIA(), tools:FERRAMENTAS, messages:Chat.hist.slice(-30) })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j?.error?.message || ("Erro " + r.status));
+    Chat.hist.push({ role:"assistant", content:j.content });
+    let usou = [];
+    j.content.forEach(b => {
+      if (b.type === "text" && b.text.trim()) Chat.visto.push({ t:"ia", txt:b.text.trim() });
+      if (b.type === "tool_use") usou.push(b);
+    });
+    usou.forEach((b,i) => {
+      if (i === 0) { Chat.pendente = b.id; Chat.visto.push({ t:"acao", id:b.id, nome:b.name, input:b.input, estado:"aberto" }); }
+      else pushUser([{ type:"tool_result", tool_use_id:b.id, content:"Mostre um pedido por vez." }]);
+    });
+  } catch(e) {
+    Chat.hist = JSON.parse(antes.hist); Chat.pendente = antes.pendente;
+    const v = Chat.visto.find(x => x.t==="acao" && x.id===antes.pendente); if (v && v.estado==="cancelado") v.estado = "aberto";
+    const msg = String(e.message||e);
+    Chat.visto.push({ t:"sis", txt: /api.key|authentication|401/i.test(msg) ? "A chave da API não foi aceita. Confira em Ajustes." : /fetch|network/i.test(msg) ? "Sem internet. Tente de novo." : "Erro do assistente: " + msg });
+  }
+  Chat.ocupado = false; salvarChat(); render();
+}
+
+function montarPedidoIA(inp){
+  let cliente = inp.cliente_id && S.clientes[inp.cliente_id] ? inp.cliente_id : "";
+  const itens = (inp.itens||[]).map(i => { const p = produto(i.produto_id); return p ? { prod:p.id, nome:p.nome, qtd:+i.quantidade_m3||0, preco: i.preco_m3 != null ? +i.preco_m3 : p.preco } : null; }).filter(i => i && i.qtd > 0);
+  return { cliente, novo: cliente ? null : (inp.novo_cliente || null), data: /^\d{4}-\d{2}-\d{2}$/.test(inp.data||"") ? inp.data : hoje(), itens,
+    pago: inp.pago === true, forma: FORMAS.includes(inp.forma_pagamento) ? inp.forma_pagamento : "Pix", entrega: inp.entrega || "", obs: inp.observacoes || "" };
+}
+function cartaoAcao(v){
+  const bts = v.estado === "aberto";
+  if (v.nome === "cadastrar_cliente") {
+    const c = v.input;
+    return `<div class="acao ${v.estado}"><h3>${v.estado==="feito"?"✓ Cliente cadastrado":"Cadastrar cliente"}</h3>
+      <div><b>${esc(c.nome)}</b></div><div class="muted">${esc(c.fone||"sem telefone")} · ${esc(c.endereco||"sem endereço")}</div>
+      ${bts?`<div class="bts"><button class="btn small primary" data-act="iaOk" data-id="${v.id}">Confirmar</button><button class="btn small ghost" data-act="iaNao" data-id="${v.id}">Cancelar</button></div>`:""}</div>`;
+  }
+  const p = montarPedidoIA(v.input);
+  const total = p.itens.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const nome = p.cliente ? S.clientes[p.cliente].nome : (p.novo?.nome ? p.novo.nome + " (cliente novo)" : "Cliente não identificado");
+  return `<div class="acao ${v.estado} num"><h3>${v.estado==="feito"?"✓ Pedido registrado":v.estado==="cancelado"?"Pedido cancelado":"Confirmar pedido"}</h3>
+    <div><b>${esc(nome)}</b> · ${dataBR(p.data)}</div>
+    <ul>${p.itens.map(i=>`<li>${m3(i.qtd)} de ${esc(i.nome)} × ${brl(i.preco)} = ${brl(i.qtd*i.preco)}</li>`).join("") || "<li>Nenhum material reconhecido</li>"}</ul>
+    <div class="muted">${p.pago?"Pago":"A receber"} · ${esc(p.forma)}${p.entrega?` · entrega: ${esc(p.entrega)}`:""}${p.obs?` · ${esc(p.obs)}`:""}</div>
+    <div class="tot"><span>Total</span><span>${brl(total)}</span></div>
+    ${bts?`<div class="bts"><button class="btn small primary" data-act="iaOk" data-id="${v.id}">Confirmar</button><button class="btn small" data-act="iaEditar" data-id="${v.id}">Editar</button><button class="btn small ghost" data-act="iaNao" data-id="${v.id}">Cancelar</button></div>`:""}</div>`;
+}
+async function confirmarAcao(id){
+  const v = Chat.visto.find(x => x.t==="acao" && x.id===id); if (!v || v.estado !== "aberto") return;
+  if (v.nome === "cadastrar_cliente") {
+    const cid = uid(); const c = v.input;
+    await Store.set("clientes", cid, { nome:c.nome, fone:c.fone||"", endereco:c.endereco||"", obs:c.obs||"", criado:Date.now() });
+    v.estado = "feito"; Chat.pendente = null;
+    if (!id.startsWith("local-")) pushUser([{ type:"tool_result", tool_use_id:id, content:`Cliente cadastrado com id ${cid}.` }]);
+  } else {
+    const p = montarPedidoIA(v.input);
+    if (!p.itens.length) { toast("Nenhum material reconhecido. Use Editar."); return; }
+    let cli = p.cliente;
+    if (!cli) {
+      if (!p.novo?.nome) { toast("Cliente não identificado. Use Editar."); return; }
+      cli = uid(); await Store.set("clientes", cli, { nome:p.novo.nome, fone:p.novo.fone||"", endereco:p.novo.endereco||"", obs:"", criado:Date.now() });
+    }
+    const pid = uid();
+    await Store.set("pedidos", pid, { cliente:cli, data:p.data, itens:p.itens, total:Math.round(p.itens.reduce((s,i)=>s+i.qtd*i.preco,0)*100)/100,
+      forma:p.forma, pago:p.pago, ciclo:cicloSugerido(cli, p.itens), obs:p.obs, entrega:p.entrega, criado:Date.now(), origem:"central" });
+    v.estado = "feito"; Chat.pendente = null;
+    if (!id.startsWith("local-")) pushUser([{ type:"tool_result", tool_use_id:id, content:`Pedido gravado (id ${pid}).` }]);
+  }
+  salvarChat(); render(); toast("Registrado");
+}
+
+function vCentral(){
+  const sugest = ["Lança 1 caçamba de areia média pro João, pago no Pix", "Quanto vendi este mês?", "Quem eu preciso avisar hoje?"];
+  const itens = Chat.visto.map(v => v.t === "acao" ? cartaoAcao(v) : `<div class="msg ${v.t}">${esc(v.txt)}</div>`).join("");
+  return `<div class="head-row"><div><h1>Central</h1><p class="sub">Fale ou escreva o pedido. O assistente monta tudo e você só confirma.${lerLS(CHAVE_IA)?.key ? "" : " Funcionando no modo simples: para entender frases mais livres, coloque a chave da IA em Ajustes."}</p></div>
+    ${Chat.visto.length?`<button class="btn small ghost" data-act="limparChat">Nova conversa</button>`:""}</div>
+  <div class="chat">
+    <div class="chat-log" id="chatLog">
+      ${itens || `<div class="msg ia">Olá! Me diga o pedido como falaria com um funcionário. Exemplo: “Ontem o Carlos da Rua 7 levou duas caçambas de areia média e uma de brita 1, vai pagar na sexta.”</div><div class="sugest">${sugest.map(t=>`<button class="btn small ghost" data-act="sugestao" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>`}
+      ${Voz.ativo ? `<div class="voz-fala" style="align-self:flex-end;min-width:60%"><small>${esc(Voz.status||"Ouvindo…")}</small><div id="vozFala">${esc(Voz.fala)}</div></div>` : ""}
+      ${Voz.erro ? `<div class="voz-erro">${esc(Voz.erro)}</div>` : ""}
+      ${Chat.ocupado ? `<div class="digitando">Pensando…</div>` : ""}
+    </div>
+    <div class="chat-in">
+      <button class="btn mic ${Voz.ativo?"on":""}" data-act="mic" aria-label="${Voz.ativo?"Parar de gravar":"Falar o pedido"}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+      <textarea id="chatTexto" rows="1" placeholder="${Voz.ativo?"Ouvindo…":"Escreva ou toque no microfone"}">${esc(Chat.rascunho)}</textarea>
+      <button class="btn primary" data-act="enviarChat" ${Chat.ocupado?"disabled":""}>Enviar</button>
+    </div>
+  </div>`;
+}
+
+/* voz: reconhecimento do navegador, em português */
+const Voz = { ativo:false, rec:null, base:"", fala:"", status:"", erro:"", cancelar:false };
+const ehIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const ehCelular = ehIOS || /Android/i.test(navigator.userAgent);
+const ehStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+function problemaMic(){
+  if (window.top !== window.self) return "O microfone não funciona nesta pré-visualização. Abra o app pelo endereço emersonsouza2025.github.io/Solitec-app.";
+  if (!window.isSecureContext) return "O microfone só funciona quando o app é aberto pelo endereço do GitHub (https), não pelo arquivo baixado no aparelho.";
+  return "";
+}
+function vozUI(){ if (dlg.open && dlg.dataset.tipo === "voz") renderVoz(); else render(); }
+function vozStatus(msg){ Voz.status = msg; Voz.erro = ""; vozUI(); }
+function vozErro(msg){ Voz.erro = msg; Voz.status = ""; Voz.ativo = false; vozUI(); $("#chatTexto")?.focus(); }
+const DICA_TECLADO = " Enquanto isso, toque no campo de texto e use o microfone do próprio teclado para ditar.";
+function erroPermissao(){
+  return ehIOS ? "O iPhone bloqueou o microfone. Vá em Ajustes > Safari > Microfone e escolha Permitir. Confira também se o Ditado está ligado em Ajustes > Geral > Teclado." + DICA_TECLADO
+    : "O microfone está bloqueado para o app. No Chrome, toque no cadeado ao lado do endereço > Permissões > Microfone > Permitir. Se o app estiver instalado: Configurações do celular > Apps > Chrome > Permissões > Microfone.";
+}
+function vozParar(){ try { Voz.rec?.stop(); } catch(e){} }
+
+async function alternarVoz(){
+  if (Voz.ativo) { vozParar(); return; }
+  Voz.erro = ""; Voz.status = ""; Voz.fala = ""; Voz.cancelar = false;
+  const prob = problemaMic(); if (prob) { vozErro(prob); return; }
+  const cfg = lerLS(CHAVE_IA);
+  if (cfg?.whisper && navigator.mediaDevices && window.MediaRecorder) { gravarAudio(cfg.whisper); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { vozErro((ehIOS ? "Este iPhone não oferece reconhecimento de voz dentro do app." : "Este navegador não tem reconhecimento de voz. Use o Google Chrome.") + DICA_TECLADO); return; }
+  const rec = new SR(); Voz.rec = rec;
+  rec.lang = "pt-BR"; rec.interimResults = true; rec.continuous = !ehCelular; rec.maxAlternatives = 1;
+  Voz.base = Chat.rascunho ? Chat.rascunho.trim() + " " : "";
+  let final = "", ouviu = false, falhou = false, iniciou = false;
+  rec.onstart = () => { iniciou = true; Voz.ativo = true; vozStatus(ehCelular ? "Ouvindo… fale o pedido. Ao terminar, faça uma pausa." : "Ouvindo… fale o pedido e toque no microfone para terminar."); };
+  rec.onspeechstart = () => { if (!Voz.fala) vozStatus("Captando sua voz…"); };
+  rec.onresult = ev => {
+    ouviu = true; let parcial = "";
+    for (let i = ev.resultIndex; i < ev.results.length; i++) { const t = ev.results[i][0].transcript; if (ev.results[i].isFinal) final += t + " "; else parcial += t; }
+    Voz.fala = (final + parcial).replace(/\s+/g, " ").trim();
+    Chat.rascunho = (Voz.base + Voz.fala).trim();
+    const el = $("#vozFala"); if (el) el.textContent = Voz.fala; else vozUI();
+    const ta = $("#chatTexto"); if (ta) ta.value = Chat.rascunho;
+  };
+  rec.onerror = ev => {
+    falhou = true;
+    const e = ev.error;
+    if (e === "aborted") return;
+    if (e === "not-allowed" || e === "service-not-allowed") vozErro(e === "service-not-allowed" && ehIOS && ehStandalone ? "No iPhone, o reconhecimento de voz não funciona com o app aberto pela tela de início. Abra o endereço pelo Safari, ou use o microfone do teclado." : erroPermissao());
+    else if (e === "no-speech") vozErro("Não ouvi nada. Toque no microfone e comece a falar logo em seguida, perto do celular.");
+    else if (e === "audio-capture") vozErro("Nenhum microfone encontrado, ou outro app (ligação, WhatsApp) está usando o microfone.");
+    else if (e === "network") vozErro("O reconhecimento de voz precisa de internet" + (ehCelular ? "." : ". No computador, use o Google Chrome (no Edge e no Brave ele costuma falhar)."));
+    else vozErro("O microfone falhou (" + e + ")." + DICA_TECLADO);
+  };
+  rec.onend = () => {
+    Voz.ativo = false;
+    if (Voz.cancelar) { Voz.cancelar = false; vozUI(); return; }
+    if (Chat.rascunho.trim() && ouviu) { Voz.status = ""; vozUI(); enviarIA(Chat.rascunho); return; }
+    if (!falhou) vozErro("Não captei nenhuma palavra. Confira se o microfone tem permissão e tente de novo." + DICA_TECLADO);
+    else vozUI();
+  };
+  try { rec.start(); vozStatus("Abrindo o microfone…"); }
+  catch(e) { vozErro("Não foi possível iniciar o microfone." + DICA_TECLADO); return; }
+  setTimeout(() => { if (!iniciou && !falhou && Voz.rec === rec) { try { rec.abort(); } catch(e){} vozErro("O navegador não liberou o microfone. Feche o app, abra de novo e permita o microfone quando ele pedir." + DICA_TECLADO); } }, 5000);
+}
+
+/* transcrição por gravação (opcional, mais precisa e funciona no iPhone instalado) */
+async function gravarAudio(chave){
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio:true }); }
+  catch(e) { vozErro(e.name === "NotFoundError" ? "Nenhum microfone encontrado." : erroPermissao()); return; }
+  const tipos = ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg"];
+  const tipo = tipos.find(t => MediaRecorder.isTypeSupported(t)) || "";
+  const mr = new MediaRecorder(stream, tipo ? { mimeType:tipo } : undefined), partes = [];
+  Voz.base = Chat.rascunho ? Chat.rascunho.trim() + " " : "";
+  mr.ondataavailable = e => { if (e.data.size) partes.push(e.data); };
+  mr.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop()); Voz.ativo = false;
+    if (Voz.cancelar) { Voz.cancelar = false; vozUI(); return; }
+    const blob = new Blob(partes, { type: mr.mimeType || tipo || "audio/webm" });
+    if (blob.size < 1500) { vozErro("Não captei áudio. Toque, fale e toque de novo para terminar."); return; }
+    vozStatus("Transcrevendo o que você falou…");
+    const ext = blob.type.includes("mp4") ? "m4a" : blob.type.includes("ogg") ? "ogg" : "webm";
+    const fd = new FormData();
+    fd.append("file", blob, "pedido." + ext); fd.append("model", "whisper-1"); fd.append("language", "pt");
+    fd.append("prompt", "Pedido de materiais: areia média, areia fina, brita 0, brita 1, pó de brita, aterro, caçamba, metros cúbicos, Pix, fiado. Clientes: " + clientesLista().slice(0,40).map(c=>c.nome).join(", "));
+    try {
+      const r = await fetch("https://api.openai.com/v1/audio/transcriptions", { method:"POST", headers:{ Authorization:"Bearer " + chave }, body:fd });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j?.error?.message || ("erro " + r.status));
+      Voz.fala = (j.text || "").trim(); Chat.rascunho = (Voz.base + Voz.fala).trim();
+      if (!Voz.fala) { vozErro("Não entendi o áudio. Tente falar mais perto do celular."); return; }
+      Voz.status = ""; vozUI(); enviarIA(Chat.rascunho);
+    } catch(e) { vozErro(/api key|401|Incorrect/i.test(e.message) ? "A chave da OpenAI não foi aceita. Confira em Ajustes." : "Falha ao transcrever: " + e.message); }
+  };
+  Voz.rec = { stop: () => { if (mr.state !== "inactive") mr.stop(); } };
+  mr.start(); Voz.ativo = true; vozStatus("Gravando… fale o pedido e toque no microfone quando terminar.");
+  setTimeout(() => { if (mr.state === "recording") mr.stop(); }, 90000);
+}
+
+/* ---------- folha de voz (microfone do painel) ---------- */
+const MIC_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+function abrirVoz(){
+  Chat.inicio = Chat.visto.length; Chat.rascunho = ""; Voz.erro = ""; Voz.status = ""; Voz.fala = "";
+  abrir(`<div class="dlg-h"><h2>Fale o pedido</h2><button class="btn icon ghost" data-act="fechar" aria-label="Fechar">✕</button></div>
+    <div class="dlg-b" id="vozCorpo"></div>
+    <div class="dlg-f" id="vozRodape" style="flex-direction:column;align-items:stretch"></div>`);
+  dlg.dataset.tipo = "voz";
+  renderVoz();
+  alternarVoz();
+}
+function renderVoz(){
+  const corpo = $("#vozCorpo"), rod = $("#vozRodape"); if (!corpo || !rod) return;
+  const itens = Chat.visto.slice(Chat.inicio || 0).map(v => v.t === "acao" ? cartaoAcao(v) : `<div class="msg ${v.t}">${esc(v.txt)}</div>`).join("");
+  const status = Voz.erro ? `<div class="voz-erro">${esc(Voz.erro)}</div>`
+    : Voz.ativo ? `<div class="voz-status ouvindo"><span class="onda"><i></i><i></i><i></i><i></i></span> ${esc(Voz.status || "Ouvindo…")}</div>`
+    : Chat.ocupado ? `<div class="voz-status">Entendendo o pedido…</div>`
+    : Voz.status ? `<div class="voz-status">${esc(Voz.status)}</div>`
+    : itens ? "" : `<div class="voz-status">Toque no microfone e diga o pedido.</div>`;
+  const fala = Voz.ativo || (Voz.fala && Voz.status) ? `<div class="voz-fala"><small>Você está dizendo:</small><div id="vozFala">${esc(Voz.fala)}</div></div>` : "";
+  corpo.innerHTML = `<div class="chat-log voz-log" id="vozLog">${itens}</div>${fala}${status}
+    <button class="voz-grande ${Voz.ativo?"on":""}" data-act="mic" aria-label="${Voz.ativo?"Parar de gravar":"Falar"}">${MIC_SVG}</button>`;
+  rod.innerHTML = `<div style="display:flex;gap:8px;align-items:flex-end"><textarea id="chatTexto" rows="1" placeholder="Ou escreva aqui">${esc(Chat.rascunho)}</textarea>
+    <button class="btn primary" data-act="enviarChat" ${Chat.ocupado?"disabled":""}>Enviar</button></div>`;
+  const log = $("#vozLog"); if (log) log.scrollTop = log.scrollHeight;
+}
+
+/* ---------- modo simples: entende o pedido sem IA ---------- */
+const semAcento = t => String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const NUM = {um:1,uma:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:6,sete:7,oito:8,nove:9,dez:10,onze:11,doze:12,quinze:15,vinte:20};
+function interpretarLocal(texto){
+  const t = " " + semAcento(texto).replace(/[.,;!?]/g, m => m === "," ? " , " : " ") + " ";
+  const cap = +S.config.cacamba || 5;
+  // materiais: procura o nome completo primeiro, depois a palavra principal
+  const prods = S.config.produtos.map(p => ({ p, n: semAcento(p.nome) })).sort((a,b) => b.n.length - a.n.length);
+  const achados = [];
+  let resto = t;
+  prods.forEach(({p,n}) => { let i; while ((i = resto.indexOf(" " + n + " ")) >= 0) { achados.push({p, pos:i, len:n.length+1}); resto = resto.slice(0,i) + " " + "#".repeat(n.length) + " " + resto.slice(i + n.length + 2); } });
+  ["areia","brita","po","aterro","barro","pedrisco"].forEach(w => {
+    let i; while ((i = resto.search(new RegExp(" " + w + " "))) >= 0) {
+      const p = prods.find(x => x.n.startsWith(w) || x.n.includes(" " + w))?.p || (w === "barro" ? prods.find(x=>x.n.includes("aterro"))?.p : null);
+      resto = resto.slice(0,i) + " " + "#".repeat(w.length) + " " + resto.slice(i + w.length + 2);
+      if (p) achados.push({p, pos:i, len:w.length+1});
+    }
+  });
+  achados.sort((a,b) => a.pos - b.pos);
+  const itens = achados.map((a, k) => {
+    const ini = k ? achados[k-1].pos + achados[k-1].len : 0, trecho = t.slice(Math.max(ini, a.pos - 40), a.pos + 1);
+    let q = null, unidade = "cacamba";
+    const m = trecho.match(/(\d+(?:[.,]\d+)?|meia|meio|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|quinze|vinte)\s*(?:e meia\s*)?(cacambas?|cacambadas?|viagens?|metros?\s*(?:cubicos?)?|m3|carradas?)?\s*(?:de|da|do)?\s*$/);
+    if (m) {
+      const w = m[1]; q = /^\d/.test(w) ? parseFloat(w.replace(",", ".")) : (w === "meia" || w === "meio") ? 0.5 : NUM[w];
+      if (/e meia/.test(m[0])) q += 0.5;
+      if (m[2] && /metro|m3/.test(m[2])) unidade = "m3";
+      else if (!m[2] && /^\d/.test(w) && q > 2) unidade = "m3";
+    }
+    if (q == null) q = 1;
+    return { produto_id: a.p.id, quantidade_m3: unidade === "m3" ? q : q * cap };
+  });
+  // cliente: nome cadastrado que aparece no texto
+  let cliente_id = null, melhor = 0;
+  clientesLista().forEach(c => {
+    const n = semAcento(c.nome), partes = n.split(/\s+/).filter(x => x.length > 2);
+    if (t.includes(" " + n + " ") && n.length > melhor) { cliente_id = c.id; melhor = n.length + 100; }
+    else if (partes[0] && t.includes(" " + partes[0] + " ") && partes[0].length > melhor) { cliente_id = c.id; melhor = partes[0].length; }
+  });
+  let novo_cliente = null;
+  if (!cliente_id) {
+    const m = texto.match(/(?:\bpro\b|\bpra\b|\bpara\b(?: o| a| a dona| o seu| seu| dona)?|\bcliente\b|\bdo\b|\bda\b|\bo\b|\ba\b)\s+([A-ZÁÉÍÓÚÂÊÔÃÕÇ][\wÀ-ú]+(?:\s+(?:da|de|do)?\s*[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9][\wÀ-ú]*){0,3})/);
+    if (m && !/^(Areia|Brita|Pix|Aterro)/i.test(m[1])) novo_cliente = { nome: m[1].trim() };
+  }
+  let data = hoje();
+  if (/ anteontem /.test(t)) data = addDias(hoje(), -2); else if (/ ontem /.test(t)) data = addDias(hoje(), -1); else if (/ amanha /.test(t)) data = addDias(hoje(), 1);
+  const out = { data, itens };
+  if (cliente_id) out.cliente_id = cliente_id; else if (novo_cliente) out.novo_cliente = novo_cliente;
+  if (/ (ja )?(pago|pagou|paga|quitado) /.test(t) && !/ vai pagar | (a|para) pagar /.test(t)) out.pago = true;
+  if (/ (vai pagar|fiado|a receber|depois|pendente|fica devendo) /.test(t)) out.pago = false;
+  if (/ pix /.test(t)) out.forma_pagamento = "Pix"; else if (/ dinheiro /.test(t)) out.forma_pagamento = "Dinheiro";
+  else if (/ cartao /.test(t)) out.forma_pagamento = "Cartão"; else if (/ boleto /.test(t)) out.forma_pagamento = "Boleto"; else if (/ fiado /.test(t)) out.forma_pagamento = "Fiado";
+  return out;
+}
+function enviarLocal(texto){
+  Chat.visto.push({ t:"eu", txt:texto }); Chat.rascunho = "";
+  const inp = interpretarLocal(texto);
+  if (!inp.itens.length) {
+    Chat.visto.push({ t:"ia", txt:"Não encontrei o material no que você disse. Tente assim: “duas caçambas de areia média para o João, pago no Pix”." });
+  } else {
+    Chat.visto.push({ t:"ia", txt: (inp.cliente_id || inp.novo_cliente) ? "Entendi assim. Confira e confirme:" : "Entendi o material, mas não o cliente. Toque em Editar para escolher o cliente." });
+    Chat.visto.push({ t:"acao", id:"local-" + uid(), nome:"registrar_pedido", input:inp, estado:"aberto" });
+  }
+  salvarChat(); render();
+}
+
+/* ---------- planilha Excel ---------- */
+function carregarXLSX(){
+  if (window.XLSX) return Promise.resolve();
+  return new Promise((ok, erro) => { const sc = document.createElement("script"); sc.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"; sc.onload = ok; sc.onerror = erro; document.head.appendChild(sc); });
+}
+async function exportarExcel(){
+  try { await carregarXLSX(); } catch(e) { toast("Sem internet para gerar a planilha."); return; }
+  const linhas = [];
+  pedidosLista().slice().reverse().forEach(p => {
+    const c = S.clientes[p.cliente] || {}; const st = situacao(p.cliente);
+    (p.itens||[]).forEach((i, k) => linhas.push({
+      "Data do pedido": parse(p.data), "Cliente": c.nome || "Cliente excluído", "WhatsApp": c.fone || "",
+      "Endereço de entrega": p.entrega || c.endereco || "", "Material": i.nome, "Quantidade (m³)": +i.qtd, "Preço por m³": +i.preco,
+      "Subtotal": Math.round(i.qtd*i.preco*100)/100, "Total do pedido": k===0 ? +p.total : null,
+      "Pagamento": p.forma || "", "Situação": p.pago ? "Pago" : "A receber",
+      "Previsão de reposição": p.ciclo ? parse(addDias(p.data, +p.ciclo)) : null,
+      "Registrado pela": p.origem === "central" ? "Central" : "Manual", "Observações": p.obs || "", "Código": p.id }));
+  });
+  const clientes = clientesLista().map(c => { const st = situacao(c.id); return {
+    "Nome": c.nome, "WhatsApp": c.fone||"", "Endereço": c.endereco||"", "Pedidos": st?.qtd||0, "Total comprado": st?.total||0,
+    "Último pedido": st ? parse(st.ult.data) : null, "Previsão de reposição": st ? parse(st.prev) : null, "Observações": c.obs||"" }; });
+  const meses = {};
+  pedidosLista().forEach(p => { const k = p.data.slice(0,7); meses[k] = meses[k] || {"Mês":k, "Pedidos":0, "Receita":0, "m³ entregues":0, "A receber":0};
+    meses[k]["Pedidos"]++; meses[k]["Receita"] += +p.total||0; meses[k]["m³ entregues"] += (p.itens||[]).reduce((a,i)=>a+(+i.qtd||0),0); if (!p.pago) meses[k]["A receber"] += +p.total||0; });
+  const resumo = Object.values(meses).sort((a,b)=>b["Mês"].localeCompare(a["Mês"]));
+
+  const wb = XLSX.utils.book_new();
+  const folha = (dados, cols, fmt) => {
+    const ws = XLSX.utils.json_to_sheet(dados.length ? dados : [{}], { cellDates:true, dateNF:"dd/mm/yyyy" });
+    ws["!cols"] = cols.map(w => ({ wch:w }));
+    if (dados.length) {
+      const ref = XLSX.utils.decode_range(ws["!ref"]); const heads = Object.keys(dados[0]);
+      for (let r = 1; r <= ref.e.r; r++) heads.forEach((h, ci) => { const cel = ws[XLSX.utils.encode_cell({r, c:ci})]; if (!cel) return;
+        if (fmt.moeda.includes(h)) cel.z = '"R$" #,##0.00'; if (fmt.data.includes(h)) cel.z = "dd/mm/yyyy"; if (fmt.m3.includes(h)) cel.z = "0.0"; });
+      ws["!autofilter"] = { ref: ws["!ref"] };
+    }
+    return ws;
+  };
+  const F = { moeda:["Preço por m³","Subtotal","Total do pedido","Total comprado","Receita","A receber"], data:["Data do pedido","Previsão de reposição","Último pedido"], m3:["Quantidade (m³)","m³ entregues"] };
+  XLSX.utils.book_append_sheet(wb, folha(linhas, [13,26,16,30,16,14,13,12,15,11,11,18,14,30,12], F), "Pedidos");
+  XLSX.utils.book_append_sheet(wb, folha(clientes, [26,16,30,9,15,14,18,30], F), "Clientes");
+  XLSX.utils.book_append_sheet(wb, folha(resumo, [10,9,15,13,15], F), "Resumo mensal");
+  XLSX.writeFile(wb, `Solitec-pedidos-${hoje()}.xlsx`);
+  toast("Planilha gerada");
+}
+
+/* ---------- ações ---------- */
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act, id = el.dataset.id;
+  if (el.tagName === "BUTTON" || el.tagName === "TR") e.preventDefault();
+  switch(a){
+    case "fechar": fechar(); break;
+    case "excel": exportarExcel(); break;
+    case "voz": abrirVoz(); break;
+    case "salvarIA": { const key = $("#iaKey").value.trim(); gravarLS(CHAVE_IA, { key, modelo:$("#iaModelo").value, whisper:$("#iaWhisper").value.trim() }); toast("Chaves salvas"); break; }
+    case "enviarChat": enviarIA($("#chatTexto").value); break;
+    case "sugestao": enviarIA(el.dataset.t); break;
+    case "mic": alternarVoz(); break;
+    case "limparChat": Chat.hist = []; Chat.visto = []; Chat.pendente = null; salvarChat(); render(); break;
+    case "iaOk": confirmarAcao(id); break;
+    case "iaNao": { const v = Chat.visto.find(x=>x.id===id); if (v) { v.estado = "cancelado"; if (Chat.pendente === id) { pushUser([{type:"tool_result", tool_use_id:id, content:"O dono cancelou."}]); Chat.pendente = null; } salvarChat(); render(); } break; }
+    case "iaEditar": {
+      const v = Chat.visto.find(x=>x.id===id); if (!v) break;
+      const p = montarPedidoIA(v.input);
+      v.estado = "cancelado"; if (Chat.pendente === id) { pushUser([{type:"tool_result", tool_use_id:id, content:"O dono abriu o pedido para editar e salvar manualmente."}]); Chat.pendente = null; }
+      salvarChat(); render();
+      dlgPedido(null, {...p, itens: p.itens.length ? p.itens : undefined, novo: p.novo});
+      break;
+    }
+    case "entrar": case "criarConta": {
+      const email = $("#lgEmail").value.trim(), senha = $("#lgSenha").value;
+      if (!email || senha.length < 6) { toast("Informe o e-mail e uma senha com 6 ou mais caracteres"); break; }
+      const r = a === "entrar" ? await Store.sb.auth.signInWithPassword({email, password:senha}) : await Store.sb.auth.signUp({email, password:senha});
+      if (r.error) { toast(r.error.message.includes("Invalid") ? "E-mail ou senha incorretos" : r.error.message); break; }
+      if (!r.data.session) { toast("Conta criada. Confirme pelo link enviado ao seu e-mail e depois entre."); break; }
+      location.reload(); break;
+    }
+    case "usarLocal": gravarLS(CHAVE_CONEXAO, null); location.reload(); break;
+    case "conectar": {
+      const url = $("#cxUrl").value.trim().replace(/\/+$/,""), key = $("#cxKey").value.trim();
+      if (!/^https:\/\/.+/.test(url) || key.length < 20) { toast("Confira o endereço e a chave"); break; }
+      if (Object.keys(S.clientes).length || Object.keys(S.pedidos).length) gravarLS(CHAVE_BACKUP, {config:S.config, clientes:S.clientes, pedidos:S.pedidos});
+      gravarLS(CHAVE_CONEXAO, {url, key}); location.reload(); break;
+    }
+    case "enviarBackup": { const b = lerLS(CHAVE_BACKUP); if (b && await Store.enviarTudo(b)) { localStorage.removeItem(CHAVE_BACKUP); toast("Dados enviados para a nuvem"); render(); } break; }
+    case "sair": await Store.sb.auth.signOut(); location.reload(); break;
+    case "desconectar": if (!confirm("Desconectar? Os dados continuam na nuvem, mas este aparelho passa a usar só os dados locais.")) break; gravarLS(CHAVE_CONEXAO, null); location.reload(); break;
+    case "baixarBackup": {
+      const blob = new Blob([JSON.stringify({config:S.config, clientes:S.clientes, pedidos:S.pedidos}, null, 2)], {type:"application/json"});
+      const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `solitec-backup-${hoje()}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(link.href), 2000); break;
+    }
+    case "mes": { const [y,m] = UI.mes; const d = new Date(y, m + (+el.dataset.d), 1); UI.mes=[d.getFullYear(),d.getMonth()]; render(); break; }
+    case "filtro": UI.filtroPed = el.dataset.f; render(); break;
+    case "novoCliente": dlgCliente(); break;
+    case "cliente": dlgCliente(id); break;
+    case "novoPedido": dlgPedido(); break;
+    case "editPedido": dlgPedido(id); break;
+    case "repetir": {
+      const st = situacao(id);
+      const itens = st ? st.ult.itens.map(i => ({...i, preco: produto(i.prod)?.preco ?? i.preco})) : undefined;
+      if (dlg.open) fechar();
+      dlgPedido(null, {cliente:id, data:hoje(), itens: itens || [{prod:S.config.produtos[0]?.id, nome:S.config.produtos[0]?.nome, qtd:S.config.cacamba||5, preco:S.config.produtos[0]?.preco||0}], pago:false, forma: st?.ult.forma || "Pix", obs:""});
+      break;
+    }
+    case "avisar": case "marcar": {
+      const st = situacao(id); if (!st) break;
+      await Store.set("pedidos", st.ult.id, {...S.pedidos[st.ult.id], avisadoEm: hoje()});
+      if (a === "marcar") toast("Marcado como avisado");
+      break;
+    }
+    case "desavisar": { const st = situacao(id); if (!st) break; const p = {...S.pedidos[st.ult.id]}; delete p.avisadoEm; await Store.set("pedidos", st.ult.id, p); break; }
+    case "salvarCliente": {
+      const nome = $("#cNome").value.trim();
+      if (!nome) { $("#cNome").focus(); toast("Informe o nome do cliente"); break; }
+      const nid = id || uid();
+      await Store.set("clientes", nid, {...(S.clientes[nid]||{criado:Date.now()}), nome, fone:$("#cFone").value.trim(), endereco:$("#cEnd").value.trim(), obs:$("#cObs").value.trim()});
+      fechar(); toast("Cliente salvo"); break;
+    }
+    case "delCliente": {
+      const n = pedidosDe(id).length;
+      if (!confirm(n ? `Excluir este cliente? Os ${n} pedidos dele continuam no histórico de receita.` : "Excluir este cliente?")) break;
+      await Store.del("clientes", id); fechar(); toast("Cliente excluído"); break;
+    }
+    case "addItem": { const box = $("#pItens"); const p0 = S.config.produtos[0]; box.insertAdjacentHTML("beforeend", itemRow({prod:p0?.id, nome:p0?.nome, qtd:0, preco:p0?.preco||0})); recalc(); break; }
+    case "rmItem": { el.closest(".item").remove(); recalc(); break; }
+    case "salvarPedido": {
+      let cli = $("#pCli").value;
+      if (cli === "__novo") {
+        const nome = $("#pNovoNome").value.trim();
+        if (!nome) { $("#pNovoNome").focus(); toast("Informe o nome do novo cliente"); break; }
+        cli = uid();
+        await Store.set("clientes", cli, {nome, fone:$("#pNovoFone").value.trim(), endereco:"", obs:"", criado:Date.now()});
+      }
+      if (!cli) { $("#pCli").focus(); toast("Escolha o cliente"); break; }
+      const itens = lerItens();
+      if (!itens.length) { toast("Informe a quantidade do material"); break; }
+      const data = $("#pData").value || hoje();
+      const pid = id || uid();
+      const ant = S.pedidos[pid] || {criado:Date.now()};
+      const novo = {...ant, cliente:cli, data, itens, total: Math.round(itens.reduce((s,i)=>s+i.qtd*i.preco,0)*100)/100,
+        forma:$("#pForma").value, pago:$("#pPago").value==="1", ciclo: +$("#pCiclo").value || cicloSugerido(cli, itens), obs:$("#pObs").value.trim(), entrega:$("#pEntrega").value.trim()};
+      if (!id) delete novo.avisadoEm;
+      await Store.set("pedidos", pid, novo);
+      fechar(); toast("Pedido salvo"); break;
+    }
+    case "delPedido": { if (!confirm("Excluir este pedido?")) break; await Store.del("pedidos", id); fechar(); toast("Pedido excluído"); break; }
+    case "addProd": $("#prodRows").insertAdjacentHTML("beforeend", prodRow({id:uid(), nome:"", preco:0, dias:20})); $("#prodRows .prod-row:last-child .pn").focus(); break;
+    case "rmProd": el.closest(".prod-row").remove(); break;
+    case "salvarCfg": {
+      const produtos = [...document.querySelectorAll(".prod-row")].map(r => ({id:r.dataset.id, nome:r.querySelector(".pn").value.trim(), preco:+r.querySelector(".pp").value||0, dias:+r.querySelector(".pd").value||20})).filter(p=>p.nome);
+      if (!produtos.length) { toast("Cadastre pelo menos um material"); break; }
+      await Store.config({ empresa:$("#cfEmpresa").value.trim() || "Solitec Construtora", cacamba:+$("#cfCacamba").value || 5, produtos, msg:$("#cfMsg").value || MSG_PADRAO, salvo:true });
+      toast("Ajustes salvos"); break;
+    }
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.target.id === "chatTexto" && e.key === "Enter" && !e.shiftKey && window.matchMedia("(min-width:761px)").matches) { e.preventDefault(); enviarIA(e.target.value); return; } if ((e.key==="Enter"||e.key===" ") && e.target.matches("tr[data-act]")) { e.preventDefault(); e.target.click(); } });
+document.addEventListener("input", e => {
+  if (e.target.id === "busca") { UI.busca = e.target.value; render(); return; }
+  if (e.target.id === "chatTexto") { Chat.rascunho = e.target.value; e.target.style.height = "auto"; e.target.style.height = Math.min(140, e.target.scrollHeight) + "px"; return; }
+  if (dlg.open && e.target.closest(".item")) recalc();
+  if (e.target.id === "pCiclo") dlg.dataset.cicloManual = "1";
+});
+document.addEventListener("change", async e => {
+  if (e.target.id === "arqBackup" && e.target.files[0]) {
+    try {
+      const d = JSON.parse(await e.target.files[0].text());
+      if (!d.clientes && !d.pedidos) throw 0;
+      if (!confirm(`Restaurar ${Object.keys(d.clientes||{}).length} clientes e ${Object.keys(d.pedidos||{}).length} pedidos? Registros com o mesmo código serão substituídos.`)) return;
+      S.clientes = {...S.clientes, ...(d.clientes||{})}; S.pedidos = {...S.pedidos, ...(d.pedidos||{})}; if (d.config) S.config = {...CONFIG_PADRAO, ...d.config};
+      Store.salvarLocal();
+      if (S.modo === "nuvem") await Store.enviarTudo(d);
+      render(); toast("Cópia restaurada");
+    } catch(err) { toast("Arquivo de cópia inválido"); }
+    return;
+  }
+  if (!dlg.open) return;
+  if (e.target.classList.contains("iProd")) { const p = produto(e.target.value); if (p) e.target.closest(".item").querySelector(".iPreco").value = p.preco; recalc(); }
+  if (e.target.id === "pCli") { $("#novoCliBox").hidden = e.target.value !== "__novo"; if (e.target.value === "__novo") $("#pNovoNome").focus(); recalc(); }
+});
+dlg.addEventListener("click", e => { if (e.target === dlg) fechar(); });
+
+render();
+Store.init();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
